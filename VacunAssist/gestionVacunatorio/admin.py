@@ -1,5 +1,7 @@
+from encodings import search_function
 from msilib.schema import Class
 from django.contrib import admin
+
 from gestionVacunatorio.models import Client, Vaccinator
 
 # Register your models here.
@@ -7,7 +9,13 @@ from gestionVacunatorio.models import Client, Vaccinator
 
 class ClientAdmin(admin.ModelAdmin):
     list_display=("name","surname","dni","dateOfBirth","zone","email")
-    search_field=("name","surname")
+    list_filter=("name","surname","dni","email","zone")
+    search_field=("name","surname","dni","email","zone")
+
+class VaccinatortAdmin(admin.ModelAdmin):
+    list_display=("name","surname","dni","email")
+    list_filter=("name","surname","dni","email")
+
 
 admin.site.register(Client,ClientAdmin)
-admin.site.register(Vaccinator)
+admin.site.register(Vaccinator,VaccinatortAdmin)
