@@ -8,7 +8,7 @@ from gestionVacunatorio.models import Client, Vaccinator
 
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display=("name","surname","dni","dateOfBirth","zone","email")
+    list_display=("name","surname","dni","dateOfBirth","zone","email","genre")
     list_filter=("name","surname","dni","email","zone")
     search_field=("name","surname","dni","email","zone")
 

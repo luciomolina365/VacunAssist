@@ -1,0 +1,41 @@
+<html>
+<head>
+    <title>Registro de Usuario</title>
+</head>
+
+<body>
+    <form action="/" method="POST"> {% csrf_token %}
+        <label for="idname">Nombre: </label>
+        <input type="text" name="name" required id="idname">
+        <br>
+        <label for="idsurname">Apellido: </label>
+        <input type="text" name="surname" required id="idsurname">
+        <br>
+        <label for="iddni">Dni: </label>
+        <input type="number" name="dni" required id="iddni">
+        <br>
+        <label for="iddateOfBirth">Fecha de nacimiento: </label>
+        <input type="date" name="dateOfBirth" required id="iddateOfBirth">
+        <br>
+        <label for="idzone">Zona: </label>
+        input:
+        <br>
+        <label for="idemail">Email: </label>
+        <input type="email" name="email" required id="idemail">
+        <br>
+        <label for="idpassword">Contraseña: </label>
+        <input type="password" name="password" required id="idpassword">
+        <br>
+        <label for="idpassword_confirm">Confirmación de contraseña: </label>
+        <input type="password" name="password_confirm" required id="idpassword_confirm">
+        <br>
+        <label for="idgenre">Zona: </label>
+        input:
+        <br>
+
+        <input type="submit" value="Listo">
+        <br>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>Registro de Usuario</title>
+
+</head>
+<body>
+    {% if form.errors %}
+    <p style="color: red;"></p>
+    {% endif %}
+    <form  method="POST"> {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Listo">
+
+    </form>
+</body>
+
+</html>   
