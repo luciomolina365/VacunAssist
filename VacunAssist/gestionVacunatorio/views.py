@@ -26,8 +26,13 @@ def home(request):
 def userRegistration(request):
     if request.method == "POST":
         form = UserRegForm(request.POST)
-        print(form)
-    return render(request, "registration/user_registration.html")
+        print(request)
+        #if form.is_valid():
+            #usuario = form.save()
+        return(request, "home.html")
+        
+    form = UserRegForm    
+    return render(request, "registration/user_registration.html", {'form':form})
 
 
 
