@@ -1,0 +1,18 @@
+<html>
+<head>
+    <title>Registro de Usuario</title>
+    {% load static %}
+
+</head>
+<body>
+
+    <form method="post"> {% csrf_token %}
+
+        {{form}}
+ 
+        <br><button type="submit" class="btn btn-success">Listo</button>
+    </form>
+
+</body>
+
+</html>   
