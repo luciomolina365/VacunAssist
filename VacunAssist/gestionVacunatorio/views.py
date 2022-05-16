@@ -4,7 +4,7 @@ from inspect import ArgSpec
 from django.shortcuts import render, HttpResponse
 from django.views.generic import View
 from gestionVacunatorio.models import Client
-from django.contrib.auth.forms import UserCreationForm
+
 
 # Create your views here.
 
@@ -17,7 +17,7 @@ def home(request):
     return render(request,'home.html')
 
 
-class UserRegistration(View):
+"""class UserRegistration(View):
 
     def get(self, request):
         form = UserCreationForm()
@@ -25,7 +25,12 @@ class UserRegistration(View):
 
 
     def post(self, request):
-        pass
+        pass"""
+
+def userRegistration(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+
 
     
 
