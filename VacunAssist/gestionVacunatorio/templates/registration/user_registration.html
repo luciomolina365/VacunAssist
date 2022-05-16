@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Registro de Usuario</title>
+    {% load static %}
+    {% load crispy_forms_tags %}
+</head>
+<body>
+
+    <form method="post" style="color: black;"> {% csrf_token %}
+        <div style="width: 75%; margin:auto">
+            {{form|crispy}}
+            <br><button type="submit" class="">Listo</button>
+        </div>
+        
+ 
+        
+    </form>
+
+</body>
+
+</html>   
