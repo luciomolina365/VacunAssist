@@ -1,9 +1,13 @@
 import argparse
 from ast import If
 from inspect import ArgSpec
+import django
 from django.shortcuts import render, HttpResponse
-from gestionVacunatorio.models import Client
 from gestionVacunatorio.forms import RegistrationForm
+from django.views.generic import View
+from django import forms
+from django.forms import ModelForm
+from .models import Vaccinator 
 # Create your views here.
 
 
