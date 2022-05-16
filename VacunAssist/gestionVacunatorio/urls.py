@@ -9,6 +9,6 @@ urlpatterns = [
     path('inicioSesion', logIn, name="LogIn"),
     path('registrarse', signIn, name="SignIn"),
     path('saludo/', saludo),
-    path("registro_de_usuario/", UserRegistration.as_view(), name="Registro"),
+    path("registro_de_usuario/", userRegistration, name="Registro"),
     #path()
 ]

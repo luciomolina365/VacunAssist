@@ -1,13 +1,9 @@
-import argparse
-from ast import If
-from inspect import ArgSpec
 from django.shortcuts import render, HttpResponse
 from django.views.generic import View
-from gestionVacunatorio.models import Client
 
+from .forms import UserRegForm
 
-# Create your views here.
-
+from .models import Vaccinator, User 
 
 def saludo(request):
     return render(request, 'prueba.html')
@@ -29,7 +25,10 @@ def home(request):
 
 def userRegistration(request):
     if request.method == "POST":
-        form = UserForm(request.POST)
+        form = UserRegForm(request.POST)
+        print(form)
+    return render(request, "registration/user_registration.html")
+
 
 
     
