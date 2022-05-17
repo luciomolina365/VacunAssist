@@ -1,7 +1,10 @@
+from django.http import QueryDict
 from django.shortcuts import render, HttpResponse
 from django.views.generic import View
+import random
+import copy
 
-from .forms import UserRegForm
+from .forms import SecondFactor_UserRegForm, UserRegForm
 
 from .models import Vaccinator, User 
 
@@ -24,10 +27,23 @@ def home(request):
         pass"""
 
 def userRegistration(request):
+    
     if request.method == "POST":
+        
+        
         form = UserRegForm(request.POST)
+
         if form.is_valid():
-            usuario = form.save()
+
+            number = random.randint(0000,9999)
+            form.cleaned_data['secondFactor'] = number
+            data = form.cleaned_data
+            print(data)
+            form2 = SecondFactor_UserRegForm(data)
+            
+            form2.save()
+
+            
             return render(request,'home.html')
 
     form = UserRegForm    

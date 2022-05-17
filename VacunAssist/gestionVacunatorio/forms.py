@@ -7,6 +7,17 @@ class UserRegForm(ModelForm):
     class Meta: 
         model = User
         fields = ('name','surname','dni','dateOfBirth','zone','email','password','gender')
+        
+        #fields = '__all__'
+
+class SecondFactor_UserRegForm(ModelForm):
+    class Meta: 
+        model = User
+        #fields = ('name','surname','dni','dateOfBirth','zone','email','password','gender')
+        
+        fields = '__all__'
+
+
 
 class VaccinatorRegForm(ModelForm):
     class Meta: 

@@ -26,7 +26,7 @@ class User(models.Model):
     dateOfBirth=models.DateField()
     zone=models.CharField(max_length=30 , choices = zones)
     email=models.CharField(max_length=30)
-    secondFactor=models.IntegerField()
+    secondFactor=models.IntegerField(blank = True, null = True)
     gender=models.CharField(max_length=30 , choices = genders)
 
 
