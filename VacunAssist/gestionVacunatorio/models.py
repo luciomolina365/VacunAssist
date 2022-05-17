@@ -66,6 +66,7 @@ class Turn(models.Model):
     date=models.DateField()
 
 class Forum(models.Model):
+    user=models.CharField(max_length=30,null=False)
     title=models.CharField(max_length=50)
     description=models.CharField(max_length=200)
     date=models.DateField()
