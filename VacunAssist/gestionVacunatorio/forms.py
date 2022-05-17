@@ -6,3 +6,4 @@ class UserRegForm(ModelForm):
     class Meta: 
         model = User
         fields = ('name','surname','dni','dateOfBirth','zone','email','password','gender')
+        
