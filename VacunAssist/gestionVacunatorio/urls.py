@@ -3,12 +3,17 @@ from django.urls import path
 from gestionVacunatorio.views import *
 
 
+app_name = 'main'
 urlpatterns = [
     path('', home),
-    path('foro', forum),
-    path('inicioSesion', logIn, name="LogIn"),
-    path('registrarse', signIn, name="SignIn"),
+
+    
+
     path('saludo/', saludo),
     path("registro_de_usuario/", userRegistration, name="Registro"),
     #path()
 ]
+
+"""path('foro', forum),
+    path('inicioSesion', logIn, name="LogIn"),
+    path('registrarse', signIn, name="SignIn"),"""

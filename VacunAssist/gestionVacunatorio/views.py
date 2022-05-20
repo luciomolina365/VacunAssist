@@ -1,8 +1,9 @@
 from django.http import QueryDict
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, redirect
 from django.views.generic import View
 import random
 import copy
+from django.contrib.auth import login, logout, authenticate
 
 from .forms import SecondFactor_UserRegForm, UserRegForm
 
@@ -16,16 +17,6 @@ def home(request):
     return render(request,'home.html')
 
 
-"""class UserRegistration(View):
-
-    def get(self, request):
-        form = UserCreationForm()
-        return render(request, "registration/user_registration.html", {"form": form})
-
-
-    def post(self, request):
-        pass"""
-
 def userRegistration(request):
     
     if request.method == "POST":
@@ -38,22 +29,26 @@ def userRegistration(request):
             number = random.randint(0000,9999)
             form.cleaned_data['secondFactor'] = number
             data = form.cleaned_data
-            print(data)
             form2 = SecondFactor_UserRegForm(data)
             
-            form2.save()
-
+            user = form2.save()
+            login(request,user)
             
-            return render(request,'home.html')
+            
+            return redirect('')
 
-    form = UserRegForm    
+        else:
+            for msg in form.error_messages:
+                print(form.error_messages[msg])
+
+    form = UserRegForm()    
     return render(request, "registration/user_registration.html", {'form':form})
 
 
 
     
 
-
+"""
 def forum(request):
     return HttpResponse('Forum')
 
@@ -62,3 +57,4 @@ def logIn(request):
 
 def signIn(request):
     return HttpResponse('Sign In')
+"""
