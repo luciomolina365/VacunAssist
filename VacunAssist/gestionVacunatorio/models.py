@@ -1,15 +1,17 @@
 
 from ast import arguments
+from random import randint
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 
 # Create your models here.
 class UserManager(BaseUserManager):
+    
     def create_user(self, dni, name, surname, email, dateOfBirth, 
         zone, gender, password=None, secondFactor=None):
-        for arg in arguments:
-            if not arg:
-                raise ValueError(f'Falta {arg}')
+
+        if not dni:
+            raise ValueError(f'Falta dni')
 
         user = self.model(
             dni=dni,
@@ -20,11 +22,27 @@ class UserManager(BaseUserManager):
             zone=zone,
             gender=gender,
             password=password,
-            secondFactor=secondFactor
+            secondFactor= randint(0000,9999)
         )
 
         user.set_password(password)
         user.save()
+        return user
+
+    def create_superuser(self, dni, name, surname, email, dateOfBirth, zone, gender, password=None):
+        superuser = self.create_user(
+            dni=dni, 
+            name=name, 
+            surname=surname, 
+            email=email, 
+            dateOfBirth=dateOfBirth, 
+            zone=zone, 
+            gender=gender, 
+            password=password)
+        superuser.is_admin = True
+        superuser.save()
+        return superuser
+
 
 class User(AbstractBaseUser):
 
@@ -48,12 +66,14 @@ class User(AbstractBaseUser):
     gender=models.CharField(max_length=30 , choices = genders)
     password=models.CharField(max_length=30, null=False)
     secondFactor=models.IntegerField(blank = True, null = True)
-    isActive= models.BooleanField(default=True)
+    is_active=models.BooleanField(default=True)
+    is_admin=models.BooleanField(default=False)
+
 
     objects = UserManager()
     
     USERNAME_FIELD = 'dni'
-    REQUIRED_FIELDS = ['password', 'dateOfBirth', 'zone', 'email', 'gender']
+    REQUIRED_FIELDS = ['name','surname','email','dateOfBirth', 'zone',  'gender','password']
 
     def  __str__(self):
         return f'{self.name}'
@@ -63,6 +83,10 @@ class User(AbstractBaseUser):
     
     def has_module_perms(self,app_label):
         return True
+
+    @property
+    def is_staff(self):
+        return self.is_admin
 
         
 

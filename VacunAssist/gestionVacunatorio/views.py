@@ -1,11 +1,9 @@
-from django.http import QueryDict
 from django.shortcuts import render, redirect
 from django.views.generic import View
-import random
-import copy
+from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 
-from .forms import SecondFactor_UserRegForm, UserRegForm
+from .forms import UserRegForm
 
 from .models import Vaccinator, User 
 
@@ -26,20 +24,21 @@ def userRegistration(request):
 
         if form.is_valid():
 
-            number = random.randint(0000,9999)
-            form.cleaned_data['secondFactor'] = number
-            data = form.cleaned_data
-            form2 = SecondFactor_UserRegForm(data)
+            print(form)
+            #user = form.save()
+            manager = UserManager()
+            manager.create_user()
             
-            user = form2.save()
             login(request,user)
             
             
             return redirect('')
 
         else:
-            for msg in form.error_messages:
-                print(form.error_messages[msg])
+            #for msg in form.error_messages:
+            #    print(form.error_messages[msg])
+            print("AHRELOCO-"*20)
+
 
     form = UserRegForm()    
     return render(request, "registration/user_registration.html", {'form':form})
