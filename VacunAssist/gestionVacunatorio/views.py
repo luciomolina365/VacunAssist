@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View
+from django.urls import reverse_lazy
+from django.views.generic import View, CreateView
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-
 from .forms import UserRegForm
-
 from .models import Vaccinator, User 
 
 def saludo(request):
@@ -15,33 +14,14 @@ def home(request):
     return render(request,'home.html')
 
 
-def userRegistration(request):
-    
-    if request.method == "POST":
-        
-        
-        form = UserRegForm(request.POST)
-
-        if form.is_valid():
-
-            print(form)
-            #user = form.save()
-            manager = UserManager()
-            manager.create_user()
-            
-            login(request,user)
-            
-            
-            return redirect('')
-
-        else:
-            #for msg in form.error_messages:
-            #    print(form.error_messages[msg])
-            print("AHRELOCO-"*20)
+class UserRegistration(CreateView):
+    model = User
+    form_class = UserRegForm
+    template_name = 'registration/user_registration.html'
+    success_url = reverse_lazy('main:Saludo')
 
 
-    form = UserRegForm()    
-    return render(request, "registration/user_registration.html", {'form':form})
+
 
 
 

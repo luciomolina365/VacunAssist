@@ -1,5 +1,6 @@
 from django import views
-from django.urls import path
+from django.urls import path, include
+from django.contrib.auth.decorators import login_required
 from gestionVacunatorio.views import *
 
 
@@ -9,9 +10,8 @@ urlpatterns = [
 
     
 
-    path('saludo/', saludo),
-    path("registro_de_usuario/", userRegistration, name="Registro"),
-    #path()
+    path('saludo/', saludo, name='Saludo'),
+    path("registro_de_usuario/", UserRegistration.as_view(), name="Registro"),
 ]
 
 """path('foro', forum),
