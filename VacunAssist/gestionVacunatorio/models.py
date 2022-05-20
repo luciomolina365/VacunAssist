@@ -1,9 +1,30 @@
-from multiprocessing.spawn import import_main_path
+
+from ast import arguments
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 
 # Create your models here.
+class UserManager(BaseUserManager):
+    def create_user(self, dni, name, surname, email, dateOfBirth, 
+        zone, gender, password=None, secondFactor=None):
+        for arg in arguments:
+            if not arg:
+                raise ValueError(f'Falta {arg}')
 
+        user = self.model(
+            dni=dni,
+            name=name,
+            surname=surname,
+            email=email,
+            dateOfBirth=dateOfBirth,
+            zone=zone,
+            gender=gender,
+            password=password,
+            secondFactor=secondFactor
+        )
+
+        user.set_password(password)
+        user.save()
 
 class User(AbstractBaseUser):
 
@@ -20,23 +41,32 @@ class User(AbstractBaseUser):
     ]
     dni=models.IntegerField('Dni', unique=True)
     name=models.CharField(max_length=30)
-    password=models.CharField(max_length=30, null=False)
     surname=models.CharField(max_length=30)
-    
+    email=models.CharField('Email', max_length=30,unique=True)
     dateOfBirth=models.DateField()
     zone=models.CharField(max_length=30 , choices = zones)
-
-    email=models.CharField('Email', max_length=30, unique=True)
-    
-    secondFactor=models.IntegerField(blank = True, null = True)
     gender=models.CharField(max_length=30 , choices = genders)
-
+    password=models.CharField(max_length=30, null=False)
+    secondFactor=models.IntegerField(blank = True, null = True)
     isActive= models.BooleanField(default=True)
 
+    objects = UserManager()
+    
     USERNAME_FIELD = 'dni'
     REQUIRED_FIELDS = ['password', 'dateOfBirth', 'zone', 'email', 'gender']
 
+    def  __str__(self):
+        return f'{self.name}'
 
+    def has_perm(self, perm, obj=None):
+        return True
+    
+    def has_module_perms(self,app_label):
+        return True
+
+        
+
+    
 class Vaccinator(models.Model):
     name=models.CharField(max_length=30)
     password=models.CharField(max_length=30)
