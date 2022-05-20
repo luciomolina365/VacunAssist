@@ -1,12 +1,11 @@
-import email
-from os import F_OK
-from turtle import title
+from multiprocessing.spawn import import_main_path
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
 
 # Create your models here.
 
 
-class User(models.Model):
+class User(AbstractBaseUser):
 
     zones = [
         ("Terminal de ómnibus","Terminal de ómnibus"), 
@@ -19,15 +18,23 @@ class User(models.Model):
         ("Femenino","Femenino"),
         ("Otro","Otro")
     ]
+    dni=models.IntegerField('Dni', unique=True)
     name=models.CharField(max_length=30)
     password=models.CharField(max_length=30, null=False)
     surname=models.CharField(max_length=30)
-    dni=models.IntegerField()
+    
     dateOfBirth=models.DateField()
     zone=models.CharField(max_length=30 , choices = zones)
-    email=models.CharField(max_length=30)
+
+    email=models.CharField('Email', max_length=30, unique=True)
+    
     secondFactor=models.IntegerField(blank = True, null = True)
     gender=models.CharField(max_length=30 , choices = genders)
+
+    isActive= models.BooleanField(default=True)
+
+    USERNAME_FIELD = 'dni'
+    REQUIRED_FIELDS = ['password', 'dateOfBirth', 'zone', 'email', 'gender']
 
 
 class Vaccinator(models.Model):

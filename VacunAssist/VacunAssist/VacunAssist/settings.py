@@ -125,3 +125,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+AUTH_USER_MODEL = "gestionVacunatorio.User"
