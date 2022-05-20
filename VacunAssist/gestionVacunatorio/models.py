@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
             dni=dni,
             name=name,
             surname=surname,
-            email=email,
+            email=self.normalize_email(email),
             dateOfBirth=dateOfBirth,
             zone=zone,
             gender=gender,

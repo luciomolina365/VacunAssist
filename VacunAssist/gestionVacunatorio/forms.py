@@ -1,9 +1,31 @@
 from dataclasses import fields
-from django.forms import ModelForm
+from django.forms import CharField, ModelForm, PasswordInput
 from .models import *
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class UserRegForm(ModelForm):
+    password1 = CharField(label='Contraseña', widget = PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese su contraseña',
+                'id':'password1'
+                'required': 'required',
+            }
+        )
+    )
+
+    password1 = CharField(label='Contraseña de confirmacion', widget = PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese su contraseña',
+                'id':'password1'
+                'required': 'required',
+            }
+        )
+    )
+
+"""class UserRegForm(ModelForm):
     class Meta: 
         model = User
         fields = ('name','surname','dni','dateOfBirth','zone','email','password','gender')
@@ -15,7 +37,7 @@ class SecondFactor_UserRegForm(ModelForm):
         model = User
         #fields = ('name','surname','dni','dateOfBirth','zone','email','password','gender')
         
-        fields = '__all__'
+        fields = '__all__'"""
 
 
 
