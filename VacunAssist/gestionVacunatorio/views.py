@@ -8,8 +8,9 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm
-from .models import Vaccinator, User 
+from .forms import UserLoginForm, UserRegForm, changeUserPassword
+from .models import Vaccinator, User
+from .mail import *
 
 def saludo(request):
     return render(request, 'prueba.html')
@@ -44,5 +45,18 @@ class UserLogin(FormView):
         return super(UserLogin, self).form_valid(form)
 
 
+def changePassword(request):
+    if request.method == "POST":
+        form = changeUserPassword(request.POST)
+        if form.is_valid():
+            data = request.POST["email"]
+            user = User.objects.get(email=data)
+            if user is not None:
+                user.password = request.POST["password"]
+                user.save()
+                sendchangePassword(user.email,user.name)
+                return render(request,'home.html')
+    form = changeUserPassword()
+    return render(request,"modification/changePass.html", {'form':form})
     
 

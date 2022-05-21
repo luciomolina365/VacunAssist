@@ -1,7 +1,8 @@
 from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm
-
+import string
+from .mail import *
 
 
 class UserLoginForm(AuthenticationForm):
@@ -110,12 +111,35 @@ class UserRegForm(forms.ModelForm):
         }
 
     def clean_password2(self):
-        print(self.cleaned_data)
         password1 = self.cleaned_data['password1']
         password2 = self.cleaned_data['password2']
+
         if password1 != password2:
             raise forms.ValidationError('Las contraseñas no coinciden')
+
+        if len(password1) < 6:
+            raise forms.ValidationError('La contraseña debe tener al menos 6 dígitos')
+
+        for letter in password1:
+            if letter == string.whitespace:
+                raise forms.ValidationError('La contraseña no debe contener espacios')
+        
         return password2
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        for letter in name:
+            if letter not in string.ascii_letters:
+                raise forms.ValidationError('El nombre no debe contener numeros ni caracteres especiales')
+
+        return name
+
+    def clean_surname(self):
+        surname = self.cleaned_data['surname']
+        for letter in surname:
+            if letter not in string.ascii_letters:
+                raise forms.ValidationError('El apellido no debe contener numeros ni caracteres especiales') 
+        return surname
 
     def save(self, commit = True):
         user = super().save(commit=False)
@@ -124,13 +148,38 @@ class UserRegForm(forms.ModelForm):
         number = randint(0000,9999)
         user.set_secondFactor(number)
 
-        #MAIL------------------------------------------------------
-    
         if commit:
-            user.save()
+
+            print('-------mail'*20)
+            print(user.secondFactor)
+            print(user.email)
+            print(self.get_name())
+            print('-------mail'*20)
+
+
+            sendSecondFactor(
+                str(user.secondFactor),
+                str(user.email),
+                str(self.get_name())
+            )
+
+            user.save() #mover arriba
+            
+            
+
         return user
 
+    def get_name(self):
+        name = self.cleaned_data['name']
+        return name
+
+
+
     
+class changeUserPassword(forms.ModelForm):
+    class Meta: 
+        model = User
+        fields = ('email','password',)
 
 class VaccinatorRegForm(forms.ModelForm):
     class Meta: 

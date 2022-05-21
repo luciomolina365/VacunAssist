@@ -4,12 +4,16 @@ import smtplib
 
 
 def sendSecondFactor(secondFactor,email,name):
+    print('/////'*20)
+    print(secondFactor)
+    print(email)
+    print(name)
     message="Hola {}, Le agradecemos que se haya registrado en nuestra pagina, Este es el segundo factor para su inicio de sesion: {} ".format(name,secondFactor)
     subject="WolfTech: Envio de segundo factor"
     ms="Subject:{}\n\n{}".format(subject,message)
     server= smtplib.SMTP("smtp.gmail.com",587)
     server.starttls()
-    server.login("tobias77aj@gmail.com","")
+    server.login("tobias77aj@gmail.com","tdetvw77")
     server.sendmail("tobias77aj@gmail.com",email,ms)
     server.quit()
 
