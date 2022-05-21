@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 import string
-from .mail import *
+from .mail.send_mail import *
 
 
 class UserLoginForm(AuthenticationForm):

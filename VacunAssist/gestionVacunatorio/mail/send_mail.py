@@ -9,7 +9,7 @@ def sendSecondFactor(secondFactor,email,name):
     ms="Subject:{}\n\n{}".format(subject,message)
     server= smtplib.SMTP("smtp.gmail.com",587)
     server.starttls()
-    server.login("yo.y.mis.videos@gmail.com","micontra")
+    server.login("yo.y.mis.videos@gmail.com","")
     server.sendmail("yo.y.mis.videos@gmail.com",email,ms)
     server.quit()
 
