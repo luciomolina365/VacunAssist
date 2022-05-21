@@ -150,13 +150,6 @@ class UserRegForm(forms.ModelForm):
 
         if commit:
 
-            print('-------mail'*20)
-            print(user.secondFactor)
-            print(user.email)
-            print(self.get_name())
-            print('-------mail'*20)
-
-
             sendSecondFactor(
                 str(user.secondFactor),
                 str(user.email),
