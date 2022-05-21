@@ -12,9 +12,5 @@ urlpatterns = [
     path('saludo/', saludo, name='Saludo'),
     path("registro_de_usuario/", UserRegistration.as_view(), name="Registro"),
     path('inicio_de_sesion/', UserLogin.as_view(), name='Inicio_de_sesion')
-    
-]
 
-"""path('foro', forum),
-    path('inicioSesion', logIn, name="LogIn"),
-    path('registrarse', signIn, name="SignIn"),"""
+]
