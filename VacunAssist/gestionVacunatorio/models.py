@@ -42,7 +42,7 @@ class UserManager(BaseUserManager):
         superuser.is_admin = True
         superuser.save()
         return superuser
-
+        
 
 class User(AbstractBaseUser):
 
@@ -72,8 +72,8 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
     
-    USERNAME_FIELD = 'dni'
-    REQUIRED_FIELDS = ['name','surname','email','dateOfBirth', 'zone',  'gender','password']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name','surname','dni','dateOfBirth', 'zone',  'gender','password']
 
     def  __str__(self):
         return f'{self.name}'
@@ -87,6 +87,9 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+    def set_secondFactor(self, number):
+        self.secondFactor = number
 
         
 
