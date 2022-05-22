@@ -28,8 +28,8 @@ class UserLoginForm(AuthenticationForm):
     ) 
     def __init__(self,  *args, **kwargs):
         super(UserLoginForm,self).__init__(*args, **kwargs)
-        #print(self.fields)
-        #print("111"*20 )
+
+
 
 
 class UserRegForm(forms.ModelForm):
@@ -150,11 +150,11 @@ class UserRegForm(forms.ModelForm):
 
         if commit:
 
-            sendSecondFactor(
-                str(user.secondFactor),
-                str(user.email),
-                str(self.get_name())
-            )
+            #sendSecondFactor(
+            #    str(user.secondFactor),
+            #    str(user.email),
+            #    str(self.get_name())
+            #)
 
             user.save() #mover arriba
             
@@ -165,14 +165,50 @@ class UserRegForm(forms.ModelForm):
     def get_name(self):
         name = self.cleaned_data['name']
         return name
+ 
 
 
 
-    
-class changeUserPassword(forms.ModelForm):
-    class Meta: 
-        model = User
-        fields = ('email','password',)
+class ChangeUserPasswordForm(forms.Form):
+
+    password1 = forms.CharField(label='Nueva contraseña', widget = forms.PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese su contraseña',
+                'id':'password1',
+                'required': 'required',
+            }
+        )
+    )
+
+    password2 = forms.CharField(label='Confirmacion de contraseña', widget = forms.PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese nuevamente su contraseña',
+                'id':'password2',
+                'required': 'required',
+            }
+        )
+    )
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+
+        if password1 != password2:
+            raise forms.ValidationError('Las contraseñas no coinciden')
+
+        if len(password1) < 6:
+            raise forms.ValidationError('La contraseña debe tener al menos 6 dígitos')
+
+        for letter in password1:
+            if letter == string.whitespace:
+                raise forms.ValidationError('La contraseña no debe contener espacios')
+        
+        return password2
+
+
+
 
 class VaccinatorRegForm(forms.ModelForm):
     class Meta: 
