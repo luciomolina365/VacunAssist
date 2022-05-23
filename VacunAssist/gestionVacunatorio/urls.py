@@ -18,6 +18,7 @@ urlpatterns = [
     path("carga_usuario/", UserLoad.as_view(), name="Carga_de_usuario"),
 
     path("cambiar_nombre/",login_required (ChangeUserName.as_view()), name="Cambiar_nombre"),
+    path("cambiar_email/",login_required (ChangeUserEmail.as_view()), name="Cambiar_email"),
 
     path('accounts/login/', UserLogin.as_view(), name='Inicio_de_sesion'),
     path('cambio_de_contraseña/', login_required(ChangeUserPassword.as_view()) , name="Cambiar_contraseña"),
