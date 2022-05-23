@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm   #falta agregar DeleteVaccinatorForm y ChangeUserEmailForm
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
