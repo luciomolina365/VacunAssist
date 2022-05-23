@@ -252,4 +252,14 @@ class ChangeUserAddressForm(forms.Form):
             }
         )
     ) 
+ 
+class DeleteVaccinator(forms.Form)
+     vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese el nombre del vacunador a borrar del sistema',
+                'id':'vacunador1',
+                'required': 'required',
+ 
+ 
  """      
