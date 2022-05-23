@@ -138,7 +138,7 @@ class ChangeUserEmail(View):
             form = VaccinatorRegForm(request.POST)
             form.save()
       context= { 'form': form }
-      return render(request, 'agregar_vacunador.html', context)
+      return render(request, 'agregar_vacunador.html', context)               #Cambiar por html correcto
 
 
 
