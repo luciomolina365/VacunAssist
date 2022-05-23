@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm   #falta agregar DeleteVaccinatorForm y ChangeUserEmailForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm, #falta agregar DeleteVaccinator
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
@@ -131,7 +131,9 @@ class ChangeUserEmail(View):
         else:
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form})
-      
+ 
+ --
+ 
  def VaccinatorRegistration(request):
       form= VaccinatorRegForm()
       
@@ -139,8 +141,9 @@ class ChangeUserEmail(View):
             form = VaccinatorRegForm(request.POST)
             form.save()
       context= { 'form': form }
-      return render(request, 'agregar_vacunador.html', context)               #Cambiar por html correcto
+      return render(request, 'registration/add_vaccinator', context)               
 
+--
 
 class DeleteVaccinator(forms.Form)
      vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
@@ -149,8 +152,28 @@ class DeleteVaccinator(forms.Form)
                 'placeholder': 'Ingrese el nombre del vacunador a eliminar del sistema',
                 'id':'vacunador1',
                 'required': 'required',
+--
 
- 
+class AdminsLogin(FormView):
+    template_name = "login/login.html"
+    form_class = AdminsLoginForm
+    success_url = reverse_lazy('main:homeS')
+
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+
+    def dispatch(self, request, *args,**kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return super(AdminsLogin,self).dispatch(request,*args, **kwargs)
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        return super(AdminLogin, self).form_valid(form)                          
+                                                                
+
+--
 
 
 def custom_logout(request):
