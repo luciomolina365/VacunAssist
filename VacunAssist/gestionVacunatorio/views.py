@@ -135,7 +135,7 @@ class ChangeUserEmail(View):
       form= VaccinatorRegForm()
       
       if request.method == 'POST':
-            form = VaccinatorForm(request.POST)
+            form = VaccinatorRegForm(request.POST)
             form.save()
       context= { 'form': form }
       return render(request, 'agregar_vacunador.html', context)
