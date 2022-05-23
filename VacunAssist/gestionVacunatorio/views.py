@@ -145,13 +145,30 @@ class ChangeUserEmail(View):
 
 --
 
-class DeleteVaccinator(forms.Form)
-     vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
-            attrs ={
-                'class':'form-control',
-                'placeholder': 'Ingrese el nombre del vacunador a eliminar del sistema',
-                'id':'vacunador1',
-                'required': 'required',
+class DeleteVaccinator(View):
+    template_name = "modification/deleteVaccinator.html"
+    form_class = DeleteVaccinatorForm
+    success_url = reverse_lazy('main:homeS')                                #cambiar
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            vacc = form.cleaned_data.get('vacunador1')
+            vaccinator = Vaccinator.objects.filter(name = vacunador1)
+            if vaccinator.exists():
+                vaccinator.delete()
+                return redirect(self.success_url)
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form})
+            
+            
 --
 
 class AdminsLogin(FormView):
