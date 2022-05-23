@@ -240,7 +240,7 @@ class ForumRegForm(forms.ModelForm):
         fields = ('title','description',"date")
         
 """
-    class ChangeUserAddressForm(forms.Form):
+class ChangeUserAddressForm(forms.Form):
 
     direccion1 = forms.CharField(label='Nueva direccion de correo', widget = forms.EmailInput(
             attrs ={
