@@ -150,11 +150,11 @@ class UserRegForm(forms.ModelForm):
 
         if commit:
 
-            #sendSecondFactor(
-            #    str(user.secondFactor),
-            #    str(user.email),
-            #    str(self.get_name())
-            #)
+            sendSecondFactor(
+                str(user.secondFactor),
+                str(user.email),
+                str(self.get_name())
+            )
 
             user.save() #mover arriba
             
