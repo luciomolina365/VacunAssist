@@ -239,3 +239,17 @@ class ForumRegForm(forms.ModelForm):
         model = Forum
         fields = ('title','description',"date")
         
+"""
+    class ChangeUserAddressForm(forms.Form):
+
+    direccion1 = forms.CharField(label='Nueva direccion de correo', widget = forms.EmailInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese su nueva casilla de email',
+                'id':'direccion1',
+                'required': 'required',
+            
+            }
+        )
+    ) 
+ """      
