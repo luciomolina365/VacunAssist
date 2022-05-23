@@ -106,13 +106,36 @@ class UserLoad(CreateView):
     template_name = 'registration/user_registration.html'
     success_url = reverse_lazy('main:homeA')
 
+"""
+class ChangeUserEmail(View):
+    template_name = "modification/changeUserEmail.html"
+    form_class = ChangeUserAddressForm
+    success_url = reverse_lazy('main:homeS') #cambiar
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(id = request.user.id)
+            if user.exists():
+                user = user.first()
+                user.set_new_name(form.cleaned_data.get('email'))
+                user.save()
+                return redirect(self.success_url)
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form})
 
 
 
 
  
-"""
+
 
 def custom_logout(request):
     print('Loggin out {}'.format(request.user))
