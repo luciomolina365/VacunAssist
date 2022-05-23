@@ -121,9 +121,10 @@ class ChangeUserEmail(View):
             user = User.objects.filter(id = request.user.id)
             if user.exists():
                 user = user.first()
-                user.set_new_name(form.cleaned_data.get('email'))
-                user.save()
+                user.set_new_email(form.cleaned_data.get('email'))
+                user.save(update_fields=["email"])                   
                 return redirect(self.success_url)
+              
 
             return redirect(self.success_url)
             
@@ -141,7 +142,13 @@ class ChangeUserEmail(View):
       return render(request, 'agregar_vacunador.html', context)               #Cambiar por html correcto
 
 
-
+class DeleteVaccinator(forms.Form)
+     vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese el nombre del vacunador a eliminar del sistema',
+                'id':'vacunador1',
+                'required': 'required',
 
  
 
