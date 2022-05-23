@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 import string
-from .mail.send_mail_aux2 import *
+from .mail.send_email import *
 
 
 class UserLoginForm(AuthenticationForm):
@@ -150,10 +150,10 @@ class UserRegForm(forms.ModelForm):
 
         if commit:
 
-            sendSecondFactor(
-                str(user.secondFactor),
+            send_secondFactor_email(
                 str(user.email),
-                str(self.get_name())
+                str(self.get_name()),
+                str(user.secondFactor)
             )
 
             user.save() #mover arriba
@@ -207,7 +207,20 @@ class ChangeUserPasswordForm(forms.Form):
         
         return password2
 
+class ChangeUserNameForm(forms.Form):
 
+    name = forms.CharField(label='Nuevo Nombre', widget = forms.TextInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese el nuevo nombre',
+                'id':'name',
+                'required': 'required',
+            }
+        )
+    )
+    def clean_password2(self):
+        name = self.cleaned_data['name']
+        return name
 
 
 class VaccinatorRegForm(forms.ModelForm):

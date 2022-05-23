@@ -8,15 +8,23 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm
 from .models import Vaccinator, User
 from .mail.send_email import *
+from django.contrib.auth import logout
 
 def saludo(request):
     return render(request, 'prueba.html')
 
 def home(request):
-    return render(request,'home.html')
+    return render(request,'indexHome.html')
+
+def homeAdmin(request):
+    return render(request,'homeAdmin.html')
+
+
+def homeWithSession(request):
+    return render(request,'homeWithSession.html')
 
 class UserRegistration(CreateView):
     model = User
@@ -27,7 +35,7 @@ class UserRegistration(CreateView):
 class UserLogin(FormView):
     template_name = "login/user_login.html"
     form_class = UserLoginForm
-    success_url = reverse_lazy('main:Saludo')
+    success_url = reverse_lazy('main:homeS')
 
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
@@ -45,7 +53,7 @@ class UserLogin(FormView):
 class ChangeUserPassword(View):
     template_name = "modification/changePass.html"
     form_class = ChangeUserPasswordForm
-    success_url = reverse_lazy('main:Saludo') #cambiar
+    success_url = reverse_lazy('main:homeS') #cambiar
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form_class})
@@ -67,10 +75,43 @@ class ChangeUserPassword(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form})
             
+class ChangeUserName(View):
+    template_name = "modification/changeName.html"
+    form_class = ChangeUserNameForm
+    success_url = reverse_lazy('main:homeS') #cambiar
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(id = request.user.id)
+            if user.exists():
+                user = user.first()
+                user.set_new_name(form.cleaned_data.get('name'))
+                user.save()
+                return redirect(self.success_url)
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form})
 
 
+class UserLoad(CreateView):
+    model = User
+    form_class = UserRegForm
+    template_name = 'registration/user_registration.html'
+    success_url = reverse_lazy('main:homeA')
 
 
+def custom_logout(request):
+    print('Loggin out {}'.format(request.user))
+    logout(request)
+    print(request.user)
+    return render(request,'indexHome.html')
 
 
 

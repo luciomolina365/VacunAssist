@@ -91,19 +91,38 @@ class User(AbstractBaseUser):
     def set_secondFactor(self, number):
         self.secondFactor = number
 
+    def set_new_name(self, name):
+        self.name = name
+
         
 
     
-class Vaccinator(models.Model):
+class Vaccinator(AbstractBaseUser):
     name=models.CharField(max_length=30)
     password=models.CharField(max_length=30)
     surname=models.CharField(max_length=30)
-    dni=models.IntegerField()
+    dni=models.IntegerField( unique=True)
     email=models.CharField(max_length=30)
+    is_vaccinator=models.BooleanField(default=True)
+    is_admin=models.BooleanField(default=False)
 
-class Admin(models.Model):
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name','surname','dni','password']
+
+    def  __str__(self):
+        return f'{self.name}'
+
+    def has_perm(self, perm, obj=None):
+        return True
+    
+    def has_module_perms(self,app_label):
+        return True
+
+class Admin(AbstractBaseUser):
     name=models.CharField(max_length=30)
     password=models.CharField(max_length=30,null=False)
+    is_vaccinator=models.BooleanField(default=True)
+    is_admin=models.BooleanField(default=True)
 
 class Formulary(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
