@@ -252,6 +252,8 @@ class ChangeUserEmailForm(forms.Form):
             }
         )
     ) 
+    
+--    
  
 class DeleteVaccinatorForm(forms.Form)
      vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
