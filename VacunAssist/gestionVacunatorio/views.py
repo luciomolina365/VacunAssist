@@ -78,7 +78,7 @@ class ChangeUserPassword(View):
 class ChangeUserName(View):
     template_name = "modification/changeName.html"
     form_class = ChangeUserNameForm
-    success_url = reverse_lazy('main:homeS') #cambiar
+    success_url = reverse_lazy('main:homeS') #CAMBIAR
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form_class})
