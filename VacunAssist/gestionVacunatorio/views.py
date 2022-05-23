@@ -29,7 +29,7 @@ def homeWithSession(request):
 class UserRegistration(CreateView):
     model = User
     form_class = UserRegForm
-    template_name = 'registration/user_registration.html'
+    template_name = 'registration/signIn.html'
     success_url = reverse_lazy('main:Inicio_de_sesion')
 
 class UserLogin(FormView):
@@ -107,19 +107,19 @@ class UserLoad(CreateView):
     success_url = reverse_lazy('main:homeA')
 
 
-def custom_logout(request):
-    print('Loggin out {}'.format(request.user))
-    logout(request)
-    print(request.user)
-    return render(request,'indexHome.html')
-
-
 
 
 
 
  
 """
+
+def custom_logout(request):
+    print('Loggin out {}'.format(request.user))
+    logout(request)
+    print(request.user)
+    return render(request,'indexHome.html')
+
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
 
