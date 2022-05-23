@@ -262,4 +262,20 @@ class DeleteVaccinatorForm(forms.Form)
                 'required': 'required',
  
  
+ --
+ 
+ class AdminsLoginForm(AuthenticationForm):
+    
+    password = forms.CharField(label='Contraseña', widget = forms.PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese su contraseña',
+                'id':'password',
+                'required': 'required',
+            }
+        )
+    )
+     def __init__(self,  *args, **kwargs):
+        super(AdminsLoginForm,self).__init__(*args, **kwargs)
+ 
  """      
