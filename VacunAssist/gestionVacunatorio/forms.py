@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 import string
-from .mail.send_mail import *
+from .mail.send_mail_aux2 import *
 
 
 class UserLoginForm(AuthenticationForm):
@@ -150,11 +150,11 @@ class UserRegForm(forms.ModelForm):
 
         if commit:
 
-            #sendSecondFactor(
-            #    str(user.secondFactor),
-            #    str(user.email),
-            #    str(self.get_name())
-            #)
+            sendSecondFactor(
+                str(user.secondFactor),
+                str(user.email),
+                str(self.get_name())
+            )
 
             user.save() #mover arriba
             

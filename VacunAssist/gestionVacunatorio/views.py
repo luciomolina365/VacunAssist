@@ -10,7 +10,7 @@ from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm
 from .models import Vaccinator, User
-from .mail.send_mail import *
+from .mail.send_email import *
 
 def saludo(request):
     return render(request, 'prueba.html')
@@ -57,6 +57,7 @@ class ChangeUserPassword(View):
             if user.exists():
                 user = user.first()
                 user.set_password(form.cleaned_data.get('password1'))
+                send_passwordConfirm_email(user.email,user.name)
                 user.save()
                 return redirect(self.success_url)
 

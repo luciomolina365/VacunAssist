@@ -61,7 +61,7 @@ def send_passwordConfirm_email(email_receiver, name):
   texte =f'''
   Hola {name}, le agradecemos que se haya registrado en nuestra pagina. Este es el segundo factor para su inicio de sesion:  
   '''
-  send_mail(email_receiver, 'VacunAssist - Segundo Factor', texte, html)
+  send_mail(email_receiver, 'VacunAssist - Clave Modificada', texte, html)
 
 
 #send_secondFactor_email('yo.y.mis.videos@gmail.com', 'Lucio', 666)
