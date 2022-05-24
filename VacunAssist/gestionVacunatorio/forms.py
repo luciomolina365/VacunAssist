@@ -240,20 +240,7 @@ class ForumRegForm(forms.ModelForm):
         fields = ('title','description',"date")
         
 """
-class ChangeUserEmailForm(forms.Form):
-
-    email1 = forms.CharField(label='Nueva direccion de correo', widget = forms.EmailInput(
-            attrs ={
-                'class':'form-control',
-                'placeholder': 'Ingrese su nueva casilla de email',
-                'id':'email1',
-                'required': 'required',
-            
-            }
-        )
-    ) 
     
---    
  
 class DeleteVaccinatorForm(forms.Form)
      vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
