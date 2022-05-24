@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUserNameForm, ChangeUserEmailForm, VaccinatorRegForm
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
@@ -106,20 +106,32 @@ class UserLoad(CreateView):
     template_name = 'registration/user_registration.html'
     success_url = reverse_lazy('main:homeA')
 
+
+class ChangeUserEmail(View):
+    template_name = "modification/changeUserEmail.html"
+    form_class = ChangeUserEmailForm
+    success_url = reverse_lazy('main:homeS') #CAMBIAR
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(id = request.user.id)
+            if user.exists():
+                user = user.first()
+                user.set_new_email(form.cleaned_data.get('email1'))
+                user.save()
+                return redirect(self.success_url)
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form })
+
 """
-
- 
- def VaccinatorRegistration(request):
-      form= VaccinatorRegForm()
-      
-      if request.method == 'POST':
-            form = VaccinatorRegForm(request.POST)
-            form.save()
-      context= { 'form': form }
-      return render(request, 'registration/add_vaccinator', context)               
-
---
-
 class DeleteVaccinator(View):
     template_name = "modification/deleteVaccinator.html"
     form_class = DeleteVaccinatorForm
@@ -145,6 +157,25 @@ class DeleteVaccinator(View):
             
             
 --
+
+
+
+
+
+
+ 
+ def VaccinatorRegistration(request):
+      form= VaccinatorRegForm()
+      
+      if request.method == 'POST':
+            form = VaccinatorRegForm(request.POST)
+            form.save()
+      context= { 'form': form }
+      return render(request, 'registration/add_vaccinator', context)               
+
+--
+
+
 
 class AdminsLogin(FormView):
     template_name = "login/login.html"

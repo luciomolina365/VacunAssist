@@ -222,11 +222,23 @@ class ChangeUserNameForm(forms.Form):
         name = self.cleaned_data['name']
         return name
 
+class ChangeUserEmailForm(forms.Form):
+
+    email1 = forms.EmailField(label='Nueva Email', widget = forms.EmailInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la nueva casilla de correo',
+                'id':'email1',
+                'required': 'required',
+            }
+        )
+    )        
+
 
 class VaccinatorRegForm(forms.ModelForm):
     class Meta: 
         model = Vaccinator
-        fields = ('name','surname','dni','email','password')
+        fields = ('name','surname','dni','email','password') 
 
 class FormularyRegForm(forms.ModelForm):
     class Meta: 
@@ -239,8 +251,8 @@ class ForumRegForm(forms.ModelForm):
         model = Forum
         fields = ('title','description',"date")
         
-"""
-    
+
+"""    
  
 class DeleteVaccinatorForm(forms.Form)
      vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
@@ -249,9 +261,10 @@ class DeleteVaccinatorForm(forms.Form)
                 'placeholder': 'Ingrese el nombre del vacunador a borrar del sistema',
                 'id':'vacunador1',
                 'required': 'required',
+            }
+        )
+    )
  
- 
- --
  
  class AdminsLoginForm(AuthenticationForm):
     
@@ -267,4 +280,4 @@ class DeleteVaccinatorForm(forms.Form)
      def __init__(self,  *args, **kwargs):
         super(AdminsLoginForm,self).__init__(*args, **kwargs)
  
- """      
+"""

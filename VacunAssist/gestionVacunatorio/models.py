@@ -93,6 +93,9 @@ class User(AbstractBaseUser):
 
     def set_new_name(self, name):
         self.name = name
+    
+    def set_new_email(self, email):
+        self.email = email
 
         
 
