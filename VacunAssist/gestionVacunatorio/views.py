@@ -8,26 +8,34 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm,ChangeUserNameForm
 from .models import Vaccinator, User
-from .mail.send_mail import *
+from .mail.send_email import *
+from django.contrib.auth import logout
 
 def saludo(request):
     return render(request, 'prueba.html')
 
 def home(request):
-    return render(request,'home.html')
+    return render(request,'indexHome.html')
+
+def homeAdmin(request):
+    return render(request,'homeAdmin.html')
+
+
+def homeWithSession(request):
+    return render(request,'homeWithSession.html')
 
 class UserRegistration(CreateView):
     model = User
     form_class = UserRegForm
-    template_name = 'registration/user_registration.html'
+    template_name = 'registration/signIn.html'
     success_url = reverse_lazy('main:Inicio_de_sesion')
 
 class UserLogin(FormView):
     template_name = "login/user_login.html"
     form_class = UserLoginForm
-    success_url = reverse_lazy('main:Saludo')
+    success_url = reverse_lazy('main:homeS')
 
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
@@ -45,7 +53,7 @@ class UserLogin(FormView):
 class ChangeUserPassword(View):
     template_name = "modification/changePass.html"
     form_class = ChangeUserPasswordForm
-    success_url = reverse_lazy('main:Saludo') #cambiar
+    success_url = reverse_lazy('main:homeS') #cambiar
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form_class})
@@ -57,6 +65,7 @@ class ChangeUserPassword(View):
             if user.exists():
                 user = user.first()
                 user.set_password(form.cleaned_data.get('password1'))
+                send_passwordConfirm_email(user.email,user.name)
                 user.save()
                 return redirect(self.success_url)
 
@@ -66,18 +75,105 @@ class ChangeUserPassword(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form})
             
+class ChangeUserName(View):
+    template_name = "modification/changeName.html"
+    form_class = ChangeUserNameForm
+    success_url = reverse_lazy('main:homeS') #CAMBIAR
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(id = request.user.id)
+            if user.exists():
+                user = user.first()
+                user.set_new_name(form.cleaned_data.get('name'))
+                user.save()
+                return redirect(self.success_url)
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form})
 
 
+class UserLoad(CreateView):
+    model = User
+    form_class = UserRegForm
+    template_name = 'registration/user_registration.html'
+    success_url = reverse_lazy('main:homeA')
 
-
-
-
-
-
-
+"""
 
  
-"""
+ def VaccinatorRegistration(request):
+      form= VaccinatorRegForm()
+      
+      if request.method == 'POST':
+            form = VaccinatorRegForm(request.POST)
+            form.save()
+      context= { 'form': form }
+      return render(request, 'registration/add_vaccinator', context)               
+
+--
+
+class DeleteVaccinator(View):
+    template_name = "modification/deleteVaccinator.html"
+    form_class = DeleteVaccinatorForm
+    success_url = reverse_lazy('main:homeS')                                #cambiar
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            vacc = form.cleaned_data.get('vacunador1')
+            vaccinator = Vaccinator.objects.filter(name = vacunador1)
+            if vaccinator.exists():
+                vaccinator.delete()
+                return redirect(self.success_url)
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form})
+            
+            
+--
+
+class AdminsLogin(FormView):
+    template_name = "login/login.html"
+    form_class = AdminsLoginForm
+    success_url = reverse_lazy('main:homeS')
+
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+
+    def dispatch(self, request, *args,**kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return super(AdminsLogin,self).dispatch(request,*args, **kwargs)
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        return super(AdminLogin, self).form_valid(form)                          
+                                                                
+
+--
+
+
+def custom_logout(request):
+    print('Loggin out {}'.format(request.user))
+    logout(request)
+    print(request.user)
+    return render(request,'indexHome.html')
+
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
 

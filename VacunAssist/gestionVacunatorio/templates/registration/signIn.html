@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.98.0">
-    <title>Signin Template · Bootstrap v5.2</title>
+    <title>Registrarse</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
 
@@ -79,15 +79,20 @@
     
 <main class="form-signin w-100 m-auto">
     <form method="POST" style="color: black;"> {% csrf_token %}
-    <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="72" height="57">
-    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
+    <h1 class="h3 mb-3 fw-normal">Registro</h1>
 
     <div style="width: 75%; margin:auto">
       {{form|crispy}}
-      <br><button class="w-100 btn btn-lg btn-primary" type="submit" class="">Iniciar sesion</button>
+      <br><button class="w-100 btn btn-lg btn-primary" type="submit" class="">Listo</button>
   </div>
-
   </form>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <a class="btn btn-primary" href='/'>Volver al inicio</a>
 </main>
 
 
