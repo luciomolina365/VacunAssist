@@ -7,7 +7,7 @@ from datetime import date
 
 
 class UserLoginForm(AuthenticationForm):
-    #el email se hereda el username del model
+    #el email se hereda del username_field del model
     password = forms.CharField(label='Contraseña', widget = forms.PasswordInput(
             attrs ={
                 'class':'form-control',
@@ -250,19 +250,18 @@ class ForumRegForm(forms.ModelForm):
         fields = ('title','description',"date")
         
 
-"""    
- 
-class DeleteVaccinatorForm(forms.Form)
-     vacunador1 = forms.TextField(label='Vacunador a eliminar', widget = forms.TextInput(
+class DeleteVaccinatorForm(forms.Form):
+
+    vaccinator1 = forms.IntegerField(label='DNI del vacunador a eliminar', widget = forms.NumberInput(
             attrs ={
                 'class':'form-control',
-                'placeholder': 'Ingrese el nombre del vacunador a borrar del sistema',
-                'id':'vacunador1',
+                'placeholder': 'Ingrese el DNI del vacunador a eliminar',
+                'id':'vaccinator1',
                 'required': 'required',
             }
         )
-    )
- 
+    ) 
+ """
  
  class AdminsLoginForm(AuthenticationForm):
     
