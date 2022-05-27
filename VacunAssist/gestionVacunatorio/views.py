@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUserNameForm, ChangeUserEmailForm, VaccinatorRegForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUserNameForm, ChangeUserEmailForm, VaccinatorRegForm, DeleteVaccinatorForm
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
@@ -31,6 +31,12 @@ class UserRegistration(CreateView):
     form_class = UserRegForm
     template_name = 'registration/signIn.html'
     success_url = reverse_lazy('main:Inicio_de_sesion')
+
+class VaccinatorRegistration(CreateView):
+     model = Vaccinator
+     form_class = VaccinatorRegForm
+      template_name = 'registration/registerVaccinator.html'
+      success_url = reverse_lazy('main:Inicio_de_sesion')
      
 
 class UserLogin(FormView):
@@ -132,11 +138,11 @@ class ChangeUserEmail(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
-"""
 class DeleteVaccinator(View):
     template_name = "modification/deleteVaccinator.html"
     form_class = DeleteVaccinatorForm
-    success_url = reverse_lazy('main:homeS')                                #cambiar
+    success_url = reverse_lazy('main:homeS') #CAMBIAR
+    denied_url = reverse_lazy('main:Eliminar_Vacunador')
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form_class})
@@ -144,58 +150,26 @@ class DeleteVaccinator(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            vacc = form.cleaned_data.get('vacunador1')
-            vaccinator = Vaccinator.objects.filter(name = vacunador1)
-            if vaccinator.exists():
-                vaccinator.delete()
-                return redirect(self.success_url)
-
-            return redirect(self.success_url)
-            
+            vaccdni = form.cleaned_data.get('vaccinator1')
+            user = Vaccinator.objects.filter(dni=vaccdni)
+            if user.exists():
+                user.delete()
+            else: 
+                messages.info(request,'El DNI ingresado no se encuentra en el sistema') 
+                redirect(self.denied_url) 
+            return redirect(self.denied_url)         
         else:
             form = self.form_class(request.POST)
-            return render(request, self.template_name, {'form':form})
-            
-            
---
+            return render(request, self.template_name, {'form':form })
 
 
-
-
-
-
- 
- def VaccinatorRegistration(request):
-      form= VaccinatorRegForm()
-      
-      if request.method == 'POST':
-            form = VaccinatorRegForm(request.POST)
-            form.save()
-      context= { 'form': form }
-      return render(request, 'registration/add_vaccinator', context)               
-
---
-
-
-
-class AdminsLogin(FormView):
-    template_name = "login/login.html"
-    form_class = AdminsLoginForm
-    success_url = reverse_lazy('main:homeS')
-
-    @method_decorator(csrf_protect)
-    @method_decorator(never_cache)
-
-    def dispatch(self, request, *args,**kwargs):
-        if request.user.is_authenticated:
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return super(AdminsLogin,self).dispatch(request,*args, **kwargs)
-
-    def form_valid(self, form):
-        login(self.request, form.get_user())
-        return super(AdminLogin, self).form_valid(form)                          
-                                                                
+def list_vaccinator(request):
+    vaccinator = Vaccinator.objects.all()
+    data = {
+        'vaccinator': vaccinator
+    }
+    return render(request, "listVaccinators.html", data)                                                         
+"""
 
 --
 
