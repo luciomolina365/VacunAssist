@@ -26,6 +26,9 @@ def homeAdmin(request):
 def homeWithSession(request):
     return render(request,'homeWithSession.html')
 
+def vaccinatorManager(request):
+    return render(request,'vaccinatorsManager.html')
+
 class UserRegistration(CreateView):
     model = User
     form_class = UserRegForm
