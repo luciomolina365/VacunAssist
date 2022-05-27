@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 import string
 from .mail.send_email import *
+from datetime import date
 
 
 class UserLoginForm(AuthenticationForm):
@@ -103,6 +104,8 @@ class UserRegForm(forms.ModelForm):
                 attrs = {
                     'class': 'form-control',
                     'placeholder': 'Fecha de nacimiento',
+                    'type':'date',
+                    'max': date.today(),
                 }
             ),
             'zone':forms.Select(choices=zones),
@@ -149,24 +152,19 @@ class UserRegForm(forms.ModelForm):
         user.set_secondFactor(number)
 
         if commit:
-
             send_secondFactor_email(
                 str(user.email),
                 str(self.get_name()),
                 str(user.secondFactor)
             )
-
-            user.save() #mover arriba
-            
-            
-
+            user.save() 
         return user
 
     def get_name(self):
         name = self.cleaned_data['name']
         return name
  
-
+ 
 
 
 class ChangeUserPasswordForm(forms.Form):
