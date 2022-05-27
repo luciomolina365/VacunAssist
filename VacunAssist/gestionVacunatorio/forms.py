@@ -216,9 +216,13 @@ class ChangeUserNameForm(forms.Form):
             }
         )
     )
-    def clean_password2(self):
+    def clean_name(self):
         name = self.cleaned_data['name']
-        return name
+        for letter in name:
+            if letter not in string.ascii_letters:
+                raise forms.ValidationError('El nombre no debe contener numeros ni caracteres especiales')
+
+        return name 
 
 class ChangeUserEmailForm(forms.Form):
 
@@ -237,8 +241,21 @@ class VaccinatorRegForm(forms.ModelForm):
     class Meta: 
         model = Vaccinator
         fields = ('name','surname','dni','email','password') 
+    def clean_surname(self):
+        surname = self.cleaned_data['surname']
+        for letter in surname:
+            if letter not in string.ascii_letters:
+                raise forms.ValidationError('El apellido no debe contener numeros ni caracteres especiales') 
+        return surname
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        for letter in name:
+            if letter not in string.ascii_letters:
+                raise forms.ValidationError('El nombre no debe contener numeros ni caracteres especiales')
 
-class FormularyRegForm(forms.ModelForm):
+        return name    
+
+ class FormularyRegForm(forms.ModelForm):
     class Meta: 
         model = Formulary
         #falta user
