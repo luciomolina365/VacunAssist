@@ -255,43 +255,27 @@ class VaccinatorRegForm(forms.ModelForm):
 
         return name    
 
- class FormularyRegForm(forms.ModelForm):
-    class Meta: 
-        model = Formulary
-        #falta user
-        fields = ('risk','admissionDate')
+    class FormularyRegForm(forms.ModelForm):
+        class Meta: 
+            model = Formulary
+            #falta user
+            fields = ('risk','admissionDate')
 
-class ForumRegForm(forms.ModelForm):
-    class Meta: 
-        model = Forum
-        fields = ('title','description',"date")
-        
+    class ForumRegForm(forms.ModelForm):
+        class Meta: 
+            model = Forum
+            fields = ('title','description',"date")
+            
+    """
+    class DeleteVaccinatorForm(forms.Form):
 
-class DeleteVaccinatorForm(forms.Form):
-
-    vaccinator1 = forms.IntegerField(label='DNI del vacunador a eliminar', widget = forms.NumberInput(
-            attrs ={
-                'class':'form-control',
-                'placeholder': 'Ingrese el DNI del vacunador a eliminar',
-                'id':'vaccinator1',
-                'required': 'required',
-            }
-        )
-    ) 
- """
- 
- class AdminsLoginForm(AuthenticationForm):
-    
-    password = forms.CharField(label='Contraseña', widget = forms.PasswordInput(
-            attrs ={
-                'class':'form-control',
-                'placeholder': 'Ingrese su contraseña',
-                'id':'password',
-                'required': 'required',
-            }
-        )
-    )
-     def __init__(self,  *args, **kwargs):
-        super(AdminsLoginForm,self).__init__(*args, **kwargs)
- 
+        vaccinator1 = forms.IntegerField(label='DNI del vacunador a eliminar', widget = forms.NumberInput(
+                attrs ={
+                    'class':'form-control',
+                    'placeholder': 'Ingrese el DNI del vacunador a eliminar',
+                    'id':'vaccinator1',
+                    'required': 'required',
+                }
+            )
+        ) 
 """
