@@ -84,15 +84,20 @@
     
     <div style="width: 100%; margin:auto">
 
+      {% if messages %}
+  
+          {% for message in messages %}
+          <center>
+            <div  class="alert alert-success" role="alert" style="width: 100%;">
+              {{message}}
+            </div>
+          </center>
+          {% endfor %}
+    
+      {% endif %}
 
-      <br>
       <br>
       {{form|crispy}}
-
-    
-
-
-
 
       <br><button class="w-100 btn btn-lg btn-primary" type="submit" class="">Iniciar sesion</button>
       <br>

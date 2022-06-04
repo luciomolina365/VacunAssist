@@ -54,7 +54,6 @@ class UserLoginForm(AuthenticationForm):
     def clean(self):
         data = super(UserLoginForm,self).clean()
         user = authenticate(email=data['username'], password= data['password'])
-        print(user.secondFactor)
         if user is not None:
             if user.secondFactor != data['secondFactor']:
                 raise ValidationError("El codigo es incorrecto")

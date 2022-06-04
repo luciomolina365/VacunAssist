@@ -93,7 +93,7 @@ def custom_logout(request):
 class ChangeUserPassword(View):
     template_name = "modification/changePass.html"
     form_class = ChangeUserPasswordForm
-    success_url = reverse_lazy('main:homeS') #cambiar
+    success_url = reverse_lazy('main:Inicio_de_sesion') #cambiar
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form_class})
