@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUserNameForm, ChangeUserEmailForm, VaccinatorRegForm, DeleteVaccinatorForm
+from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUserNameForm, ChangeUserEmailForm, VaccinatorRegForm
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
@@ -38,10 +38,10 @@ class UserRegistration(CreateView):
     success_url = reverse_lazy('main:Inicio_de_sesion')
 
 class VaccinatorRegistration(CreateView):
-     model = Vaccinator
-     form_class = VaccinatorRegForm
-     template_name = 'registration/registerVaccinator.html'
-     success_url = reverse_lazy('main:Inicio_de_sesion')
+    model = Vaccinator
+    form_class = VaccinatorRegForm
+    template_name = 'registration/registerVaccinator.html'
+    success_url = reverse_lazy('main:Inicio_de_sesion')
      
 
 class UserLogin(FormView):
@@ -65,6 +65,30 @@ class UserLogin(FormView):
 
     def form_invalid(self, form):
         return super().form_invalid(form)
+
+
+def custom_logout(request):
+    print('Loggin out {}'.format(request.user))
+    logout(request)
+    print(request.user)
+    return render(request,'indexHome.html')
+
+
+#Eso nose de donde salio
+
+"""  @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+
+    def dispatch(self, request, *args,**kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return super(ChangeUserPassword,self).dispatch(request,*args, **kwargs)
+
+    def form_valid(self, form):
+        return super(ChangeUserPassword, self).form_valid(form)
+"""
+
 
 class ChangeUserPassword(View):
     template_name = "modification/changePass.html"
@@ -149,6 +173,7 @@ class ChangeUserEmail(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
+"""
 class DeleteVaccinator(View):
     template_name = "modification/deleteVaccinator.html"
     form_class = DeleteVaccinatorForm
@@ -180,29 +205,6 @@ def list_vaccinator(request):
         'vaccinator': vaccinator
     }
     return render(request, "listVaccinators.html", data)                                                         
-"""
-
---
-
-
-def custom_logout(request):
-    print('Loggin out {}'.format(request.user))
-    logout(request)
-    print(request.user)
-    return render(request,'indexHome.html')
-
-    @method_decorator(csrf_protect)
-    @method_decorator(never_cache)
-
-    def dispatch(self, request, *args,**kwargs):
-        if request.user.is_authenticated:
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return super(ChangeUserPassword,self).dispatch(request,*args, **kwargs)
-
-    def form_valid(self, form):
-        #
-        return super(ChangeUserPassword, self).form_valid(form)
 
 def changePassword(request):
     if request.method == "POST":
