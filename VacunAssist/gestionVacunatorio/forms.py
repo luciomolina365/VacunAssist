@@ -1,6 +1,7 @@
 from genericpath import exists
 from django import forms
 from .models import *
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 import string
 from .mail.send_email import *
@@ -50,11 +51,17 @@ class UserLoginForm(AuthenticationForm):
             params={"username": self.username_field.verbose_name},
         )
 
-
+    def clean(self):
+        data = super(UserLoginForm,self).clean()
+        user = authenticate(email=data['username'], password= data['password'])
+        print(user.secondFactor)
+        if user is not None:
+            if user.secondFactor != data['secondFactor']:
+                raise ValidationError("El codigo es incorrecto")
+        return data
 
     def __init__(self,  *args, **kwargs):
         super(UserLoginForm,self).__init__(*args, **kwargs)
-
 
 
 
