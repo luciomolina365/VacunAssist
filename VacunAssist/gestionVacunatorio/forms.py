@@ -334,8 +334,7 @@ class DeleteVaccinatorForm(forms.Form):
             model = Forum
             fields = ('title','description',"date")
             
-    """
-    class DeleteVaccinatorForm(forms.Form):
+class DeleteVaccinatorForm(forms.Form):
 
         vaccinator1 = forms.IntegerField(label='DNI del vacunador a eliminar', widget = forms.NumberInput(
                 attrs ={
@@ -346,4 +345,4 @@ class DeleteVaccinatorForm(forms.Form):
                 }
             )
         ) 
-"""
+        """
