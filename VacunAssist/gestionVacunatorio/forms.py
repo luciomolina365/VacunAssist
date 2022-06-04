@@ -1,14 +1,26 @@
+from genericpath import exists
 from django import forms
 from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 import string
 from .mail.send_email import *
 from datetime import date
+from django.core.exceptions import ValidationError
 
 
 class UserLoginForm(AuthenticationForm):
     #el email se hereda del username_field del model
-    password = forms.CharField(label='Contraseña', widget = forms.PasswordInput(
+
+
+    default_errors = {
+    "invalid_login": (
+            "Ha ingresado incorrectamente alguno de los campos.\n "
+            "Tenga en cuenta que la clave debe ser de 6 caracteres o mas.\n "
+            "El segundo factor es de 4 digitos y la clave no posee caracteres especiales."
+        )
+    }
+
+    password = forms.CharField(error_messages=default_errors ,label='Contraseña', widget = forms.PasswordInput(
             attrs ={
                 'class':'form-control',
                 'placeholder': 'Ingrese su contraseña',
@@ -18,7 +30,9 @@ class UserLoginForm(AuthenticationForm):
         )
     )
 
-    secondFactor = forms.IntegerField(label='Segundo Factor', widget = forms.NumberInput(
+    
+
+    secondFactor = forms.IntegerField(error_messages=default_errors ,label='Segundo Factor', widget = forms.NumberInput(
             attrs ={
                 'class':'form-control',
                 'placeholder': 'Ingrese el nro de seguridad',
@@ -27,6 +41,17 @@ class UserLoginForm(AuthenticationForm):
             }
         )
     ) 
+
+
+    def get_invalid_login_error(self):
+        return ValidationError(
+            self.default_errors["invalid_login"],
+            code="invalid_login",
+            params={"username": self.username_field.verbose_name},
+        )
+
+
+
     def __init__(self,  *args, **kwargs):
         super(UserLoginForm,self).__init__(*args, **kwargs)
 
@@ -144,6 +169,7 @@ class UserRegForm(forms.ModelForm):
                 raise forms.ValidationError('El apellido no debe contener numeros ni caracteres especiales') 
         return surname
 
+
     def save(self, commit = True):
         user = super().save(commit=False)
         
@@ -234,8 +260,11 @@ class ChangeUserEmailForm(forms.Form):
                 'required': 'required',
             }
         )
-    )        
-
+    )      
+    user = User.objects.filter(email = email1)
+    if user.exists():
+        raise forms.ValidationError('el email ya existe en el sistema')
+    
 
 class VaccinatorRegForm(forms.ModelForm):
     class Meta: 
@@ -255,7 +284,7 @@ class VaccinatorRegForm(forms.ModelForm):
 
         return name    
 
- class FormularyRegForm(forms.ModelForm):
+class FormularyRegForm(forms.ModelForm):
     class Meta: 
         model = Formulary
         #falta user
@@ -278,7 +307,7 @@ class DeleteVaccinatorForm(forms.Form):
             }
         )
     ) 
- """
+"""
  
  class AdminsLoginForm(AuthenticationForm):
     

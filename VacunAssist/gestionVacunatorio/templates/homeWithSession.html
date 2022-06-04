@@ -25,6 +25,34 @@
         <span class="site-heading-lower">Gestión de Vacunatorios</span>
       </h1>
 
+    <div style= "text-align:right; margin-right:100px;color:white;">
+
+      {% if messages %}
+  
+          {% for message in messages %}
+          <center>
+            <div  class="alert alert-success" role="alert" style="width: 350px;">
+              {{message}}
+            </div>
+          </center>
+          {% endfor %}
+    
+      {% endif %}
+
+    
+    {% if user.is_authenticated %}
+    Hola {{user.name}}
+    {%else%}
+    No estas autenticado
+    {%endif%}
+    </div>
+    <div style= "text-align:right; margin-right:100px;color:white;">
+    
+      {% if user.is_authenticated %}
+      {{user.email}}
+      {%endif%}
+      </div>
+
 
  <!-- Navbar -->
  <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">

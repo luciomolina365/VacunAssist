@@ -12,6 +12,8 @@ from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUse
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
+from django.contrib import messages
+
 
 def saludo(request):
     return render(request, 'prueba.html')
@@ -38,8 +40,8 @@ class UserRegistration(CreateView):
 class VaccinatorRegistration(CreateView):
      model = Vaccinator
      form_class = VaccinatorRegForm
-      template_name = 'registration/registerVaccinator.html'
-      success_url = reverse_lazy('main:Inicio_de_sesion')
+     template_name = 'registration/registerVaccinator.html'
+     success_url = reverse_lazy('main:Inicio_de_sesion')
      
 
 class UserLogin(FormView):
@@ -58,7 +60,11 @@ class UserLogin(FormView):
 
     def form_valid(self, form):
         login(self.request, form.get_user())
+        messages.success(self.request,"Inicio de sesion exitoso")
         return super(UserLogin, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 class ChangeUserPassword(View):
     template_name = "modification/changePass.html"
@@ -77,6 +83,7 @@ class ChangeUserPassword(View):
                 user.set_password(form.cleaned_data.get('password1'))
                 send_passwordConfirm_email(user.email,user.name)
                 user.save()
+                messages.success(request,"Cambio de Contraseña exitoso")
                 return redirect(self.success_url)
 
             return redirect(self.success_url)
@@ -101,6 +108,7 @@ class ChangeUserName(View):
                 user = user.first()
                 user.set_new_name(form.cleaned_data.get('name'))
                 user.save()
+                messages.success(request,"Cambio de nombre exitoso")
                 return redirect(self.success_url)
 
             return redirect(self.success_url)
