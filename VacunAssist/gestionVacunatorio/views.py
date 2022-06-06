@@ -1,3 +1,4 @@
+from queue import Empty
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -8,7 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
-from .forms import UserLoginForm, UserRegForm, ChangeUserPasswordForm, ChangeUserNameForm, ChangeUserEmailForm, VaccinatorRegForm
+from .forms import *
 from .models import Vaccinator, User
 from .mail.send_email import *
 from django.contrib.auth import logout
@@ -41,7 +42,7 @@ class VaccinatorRegistration(CreateView):
     model = Vaccinator
     form_class = VaccinatorRegForm
     template_name = 'registration/registerVaccinator.html'
-    success_url = reverse_lazy('main:Inicio_de_sesion')
+    success_url = reverse_lazy('main:Inicio_de_sesion_staff')
      
 
 class UserLogin(FormView):
@@ -149,7 +150,7 @@ class UserLoad(CreateView):
     success_url = reverse_lazy('main:homeA')
 
 
-class ChangeUserEmail(View):
+"""class ChangeUserEmail(View):
     template_name = "modification/changeUserEmail.html"
     form_class = ChangeUserEmailForm
     success_url = reverse_lazy('main:homeS') #CAMBIAR
@@ -172,6 +173,54 @@ class ChangeUserEmail(View):
         else:
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
+
+ """
+
+class staffLogin(FormView):
+    template_name = "login/staff_login.html"
+    form_class = VaccinatorLoginForm
+    success_url = reverse_lazy('main:homeA')
+
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+
+    def dispatch(self, request, *args,**kwargs):
+        print(len(request.POST))
+        #vac = Vaccinator.objects.filter(email = request.user.email)
+        if len(request.POST) != 0:
+            try:
+                m = Vaccinator.objects.get(email=request.POST['username'])
+                if m.check_password(request.POST['password']):
+                    request.session['id'] = m.id
+                    print("contraseña correcta")
+                    return HttpResponseRedirect(self.get_success_url())
+                else:
+                    print("contraseña incorrecta")
+            except Vaccinator.DoesNotExist:
+                print("contraseña incorrecta")
+        return super(staffLogin,self).dispatch(request,*args, **kwargs)
+
+
+        #if request.user.is_authenticated:
+         #   print(request.user)
+          #  return HttpResponseRedirect(self.get_success_url())
+        #else:
+         #   return super(staffLogin,self).dispatch(request,*args, **kwargs)
+
+    def form_valid(self, form):
+        print(form.get_user())
+        login(self.request, form.get_user())
+        messages.success(self.request,"Inicio de sesion exitoso")
+        return super(staffLogin, self).form_valid(form)
+
+    
+    def form_invalid(self, form):
+        print("11111111111111111111111")
+
+
+        print(form.cleaned_data)
+
+        return super().form_invalid(form)
 
 """
 class DeleteVaccinator(View):

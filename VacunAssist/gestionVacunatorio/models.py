@@ -1,4 +1,3 @@
-
 from ast import arguments
 from random import randint
 from django.db import models
@@ -106,8 +105,10 @@ class Vaccinator(AbstractBaseUser):
     surname=models.CharField(max_length=30)
     dni=models.IntegerField( unique=True)
     email=models.CharField(max_length=30)
+    is_active=models.BooleanField(default=True)
     is_vaccinator=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name','surname','dni','password']
@@ -121,9 +122,18 @@ class Vaccinator(AbstractBaseUser):
     def has_module_perms(self,app_label):
         return True
 
+
+    def is_vac(self):
+        return True
+
+    @property
+    def is_staff(self):
+        return self.is_vaccinator or self.is_admin
+
 class Admin(AbstractBaseUser):
     name=models.CharField(max_length=30)
     password=models.CharField(max_length=30,null=False)
+    is_active=models.BooleanField(default=True)
     is_vaccinator=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=True)
 
