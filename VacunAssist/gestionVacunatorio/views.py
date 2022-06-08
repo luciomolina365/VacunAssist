@@ -43,6 +43,12 @@ class VaccinatorRegistration(CreateView):
     form_class = VaccinatorRegForm
     template_name = 'registration/registerVaccinator.html'
     success_url = reverse_lazy('main:Inicio_de_sesion_staff')
+
+class AdminRegistration(CreateView):
+    model = Admin
+    form_class = AdminRegForm
+    template_name = 'registration/registerAdmin.html'
+    success_url = reverse_lazy('main:Inicio_de_sesion_staff')
      
 
 class UserLogin(FormView):
@@ -185,41 +191,30 @@ class staffLogin(FormView):
     @method_decorator(never_cache)
 
     def dispatch(self, request, *args,**kwargs):
-        print(len(request.POST))
-        #vac = Vaccinator.objects.filter(email = request.user.email)
         if len(request.POST) != 0:
+            print(request.POST['username'])
             try:
-                m = Vaccinator.objects.get(email=request.POST['username'])
+                if (request.POST['username']== "admin"):
+                    m= Admin.objects.get(name=request.POST['username'])
+                else:
+                    m = Vaccinator.objects.get(email=request.POST['username'])
                 if m.check_password(request.POST['password']):
                     request.session['id'] = m.id
-                    print("contraseña correcta")
+                    messages.success(self.request,"Contraseña correcta")
                     return HttpResponseRedirect(self.get_success_url())
                 else:
-                    print("contraseña incorrecta")
+                    messages.error(self.request,"Contraseña incorrecta")
             except Vaccinator.DoesNotExist:
-                print("contraseña incorrecta")
+                messages.error(self.request,"contraseña incorrecta")
         return super(staffLogin,self).dispatch(request,*args, **kwargs)
 
-
-        #if request.user.is_authenticated:
-         #   print(request.user)
-          #  return HttpResponseRedirect(self.get_success_url())
-        #else:
-         #   return super(staffLogin,self).dispatch(request,*args, **kwargs)
-
     def form_valid(self, form):
-        print(form.get_user())
         login(self.request, form.get_user())
         messages.success(self.request,"Inicio de sesion exitoso")
         return super(staffLogin, self).form_valid(form)
 
     
     def form_invalid(self, form):
-        print("11111111111111111111111")
-
-
-        print(form.cleaned_data)
-
         return super().form_invalid(form)
 
 """

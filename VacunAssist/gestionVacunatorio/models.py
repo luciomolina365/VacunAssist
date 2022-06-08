@@ -1,4 +1,5 @@
 from ast import arguments
+import email
 from random import randint
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
@@ -128,7 +129,7 @@ class Vaccinator(AbstractBaseUser):
 
     @property
     def is_staff(self):
-        return self.is_vaccinator or self.is_admin
+        return self.is_admin
 
 class Admin(AbstractBaseUser):
     name=models.CharField(max_length=30)
@@ -136,6 +137,12 @@ class Admin(AbstractBaseUser):
     is_active=models.BooleanField(default=True)
     is_vaccinator=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=True)
+    
+    USERNAME_FIELD = 'name'
+
+    def isAdmin(self):
+        return self.is_admin
+
 
 class Formulary(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
