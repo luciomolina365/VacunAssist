@@ -14,10 +14,8 @@ from django.core.exceptions import ValidationError
 
 class UserLoginForm(AuthenticationForm):
     #el email se hereda del username_field del model
-
-
     default_errors = {
-    "invalid_login": (
+        "invalid_login": (
             "Ha ingresado incorrectamente alguno de los campos.\n "
             "Tenga en cuenta que la clave debe ser de 6 caracteres o mas.\n "
             "El segundo factor es de 4 digitos y la clave no posee caracteres especiales."
@@ -59,6 +57,7 @@ class UserLoginForm(AuthenticationForm):
         user = authenticate(email=data['username'], password= data['password'])
         if user is not None:
             if user.secondFactor != data['secondFactor']:
+                print(user.secondFactor)
                 raise ValidationError("El codigo es incorrecto")
         return data
 
@@ -187,11 +186,11 @@ class UserRegForm(forms.ModelForm):
         user.set_secondFactor(number)
 
         if commit:
-            send_secondFactor_email(
-                str(user.email),
-                str(self.get_name()),
-                str(user.secondFactor)
-            )
+            #send_secondFactor_email(
+            #    str(user.email),
+            #    str(self.get_name()),
+            #    str(user.secondFactor)
+            #)
             user.save() 
         return user
 
@@ -199,8 +198,6 @@ class UserRegForm(forms.ModelForm):
         name = self.cleaned_data['name']
         return name
  
- 
-
 
 class ChangeUserPasswordForm(forms.Form):
 
