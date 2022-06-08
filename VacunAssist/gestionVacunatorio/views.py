@@ -1,4 +1,5 @@
 from queue import Empty
+from re import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -84,21 +85,6 @@ def custom_logout(request):
     print(request.user)
     return render(request,'indexHome.html')
 
-
-#Eso nose de donde salio
-
-"""  @method_decorator(csrf_protect)
-    @method_decorator(never_cache)
-
-    def dispatch(self, request, *args,**kwargs):
-        if request.user.is_authenticated:
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return super(ChangeUserPassword,self).dispatch(request,*args, **kwargs)
-
-    def form_valid(self, form):
-        return super(ChangeUserPassword, self).form_valid(form)
-"""
 
 
 class ChangeUserPassword(View):
@@ -196,15 +182,14 @@ class staffLogin(FormView):
 
     def dispatch(self, request, *args,**kwargs):
         if len(request.POST) != 0:
-            print(request.POST['username'])
             try:
                 if (request.POST['username']== "admin"):
                     m= Admin.objects.get(name=request.POST['username'])
                 else:
                     m = Vaccinator.objects.get(email=request.POST['username'])
                 if m.check_password(request.POST['password']):
-                    request.session['id'] = m.id
-                    messages.success(self.request,"Contraseña correcta")
+                    request.session['user'] = {"name":m.name,"email":m.email}
+
                     return HttpResponseRedirect(self.get_success_url())
                 else:
                     messages.error(self.request,"Contraseña incorrecta")

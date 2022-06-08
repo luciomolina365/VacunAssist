@@ -58,7 +58,7 @@ class UserLoginForm(AuthenticationForm):
         if user is not None:
             if user.secondFactor != data['secondFactor']:
                 print(user.secondFactor)
-                raise ValidationError("El codigo es incorrecto")
+                raise ValidationError("Ha ingresado incorrectamente alguno de los campos. Tenga en cuenta que la clave debe ser de 6 caracteres o mas. El segundo factor es de 4 digitos y la clave no posee caracteres especiales. ")
         return data
 
     def __init__(self,  *args, **kwargs):

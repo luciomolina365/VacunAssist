@@ -82,6 +82,18 @@
   <div class="px-4 py-5 my-5 text-center">
     <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
     <h1 class="display-5 fw-bold" >VacunAssist</h1>
+
+    {% if messages %}
+  
+    {% for message in messages %}
+    <center>
+      <div  class="alert alert-success" role="alert" style="width: 350px;">
+        {{message}}
+      </div>
+    </center>
+    {% endfor %}
+
+{% endif %}
     <div class="col-lg-6 mx-auto">
       <p class="lead mb-4">Hola Somos VacunAssist, un conjunto de vacunatorios donde lo principal e importante son nuestros clientes, Donde se les brindara multiples funciones a la hora de su vacunacion</p>
       <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">

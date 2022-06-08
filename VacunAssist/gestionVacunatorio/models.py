@@ -97,7 +97,6 @@ class User(AbstractBaseUser):
     def set_new_email(self, email):
         self.email = email
 
-        
 
     
 class Vaccinator(AbstractBaseUser):
@@ -113,6 +112,8 @@ class Vaccinator(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name','surname','dni','password']
+
+
 
     def  __str__(self):
         return f'{self.name}'
@@ -130,6 +131,7 @@ class Vaccinator(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
 
 class Admin(AbstractBaseUser):
     name=models.CharField(max_length=30)
