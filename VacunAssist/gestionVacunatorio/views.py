@@ -12,7 +12,6 @@ from django.contrib.auth import login, logout, authenticate
 from .forms import *
 from .models import Vaccinator, User
 from .mail.send_email import *
-from django.contrib.auth import logout
 from django.contrib import messages
 
 
@@ -50,6 +49,11 @@ class AdminRegistration(CreateView):
     template_name = 'registration/registerAdmin.html'
     success_url = reverse_lazy('main:Inicio_de_sesion_staff')
      
+
+def logout_request(request):
+    logout(request)
+    messages.info(request, "Cierre de sesión exitoso")
+    return redirect('main:homepage')
 
 class UserLogin(FormView):
     template_name = "login/user_login.html"

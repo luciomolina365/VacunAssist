@@ -6,7 +6,7 @@ from gestionVacunatorio.views import *
 
 app_name = 'main'
 urlpatterns = [
-    path('', home),
+    path('', home, name='homepage'),
     path('Home/', homeWithSession,name="homeS"),
     path('HomeAdmin/', homeAdmin ,name="homeA"),
     path('gestion_de_vacunadores/', vaccinatorManager, name='vaccinatorsM'),
@@ -29,5 +29,7 @@ urlpatterns = [
 
     path('accounts/login/', UserLogin.as_view(), name='Inicio_de_sesion'),
     path('cambio_de_contraseña/', login_required(ChangeUserPassword.as_view()) , name="Cambiar_contraseña"),
-    path('cierre_de_sesion/', logout_then_login, name = 'Cierre_de_sesion')
+    #path('cierre_de_sesion/', logout_then_login, name = 'Cierre_de_sesion')
+    path('cierre_de_sesion/', logout_request, name = 'Cierre_de_sesion')
+    
 ]
