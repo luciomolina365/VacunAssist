@@ -258,20 +258,20 @@ class ChangeUserNameForm(forms.Form):
 
 
 
-#class ChangeUserEmailForm(forms.Form):
+class ChangeUserEmailForm(forms.Form):
 
-  #  email1 = forms.EmailField(label='Nueva Email', widget = forms.EmailInput(
-           # attrs ={
-          #      'class':'form-control',
-         #       'placeholder': 'Ingrese la nueva casilla de correo',
-        #        'id':'email1',
-       #         'required': 'required',
-      #      }
-     #   )
-    #)      
-   # user = User.objects.filter(email = email1)
-  #  if user.exists():
-   #     raise forms.ValidationError('el email ya existe en el sistema')
+    email1 = forms.EmailField(label='Nueva Email', widget = forms.EmailInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la nueva casilla de correo',
+               'id':'email1',
+                'required': 'required',
+            }
+        )
+    )  
+
+
+    
     
     
 #-------------------------------------------------------------------------
@@ -307,6 +307,13 @@ class VaccinatorLoginForm(AuthenticationForm):
 
     def __init__(self,  *args, **kwargs):
         super(VaccinatorLoginForm,self).__init__(*args, **kwargs)
+
+    def clean(self):
+        data = super(VaccinatorLoginForm,self).clean()
+        user = authenticate(email=data['username'], password= data['password'])
+        if user is not None:
+                raise ValidationError("Ha ingresado incorrectamente alguno de los campos. Tenga en cuenta que la clave debe ser de 6 caracteres o mas. El segundo factor es de 4 digitos y la clave no posee caracteres especiales. ")
+        return data
 
 
 class AdminRegForm(forms.ModelForm):
@@ -345,7 +352,7 @@ class AdminRegForm(forms.ModelForm):
                     'class': 'form-control',
                     'placeholder': 'Nombre',
                 }
-            )
+            ),
         }
 
 

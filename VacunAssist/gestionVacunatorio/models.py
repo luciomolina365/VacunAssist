@@ -104,7 +104,7 @@ class Vaccinator(AbstractBaseUser):
     password=models.CharField(max_length=30)
     surname=models.CharField(max_length=30)
     dni=models.IntegerField( unique=True)
-    email=models.CharField(max_length=30)
+    email=models.CharField(max_length=30,unique=True)
     is_active=models.BooleanField(default=True)
     is_vaccinator=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)

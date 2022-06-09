@@ -19,6 +19,7 @@
         
     
     <link href="{% static 'gestionVacunatorio/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+  
     
         <style>
           .bd-placeholder-img {
@@ -80,6 +81,18 @@
       <body class="text-center">
         
     <main class="form-signin w-100 m-auto">
+
+      {% if messages %}
+
+      {% for message in messages %}
+      <center>
+        <div  class="alert alert-success" role="alert" style="width: 100%;">
+          {{message}}
+        </div>
+      </center>
+      {% endfor %}
+  
+    {% endif %}
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
         <h1 class="h3 mb-3 fw-normal">Cambiar Email de usuario</h1>

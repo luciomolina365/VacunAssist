@@ -19,12 +19,15 @@ urlpatterns = [
     path("carga_usuario/", UserLoad.as_view(), name="Carga_de_usuario"),
 
     path("cambiar_nombre/",login_required (ChangeUserName.as_view()), name="Cambiar_nombre"),
-    #path("cambiar_email/",login_required (ChangeUserEmail.as_view()), name="Cambiar_email"),
+    path("cambiar_email/",login_required (ChangeUserEmail.as_view()), name="Cambiar_email"),
     
     path("registrar_vacunador/",VaccinatorRegistration.as_view(), name="Registrar_Vacunador"),
     path("registrar_admin/",AdminRegistration.as_view(), name="Registrar_Admin"),
+
+
     #path("eliminar_vacunador/",login_required(DeleteVaccinator.as_view()), name = "Eliminar_Vacunador"),
     #path("listar_vacunadores",login_required(list_vaccinator), name = "Listar_Vacunadores"),
+
     path('accounts/admin_login/', staffLogin.as_view(), name='Inicio_de_sesion_staff'),
 
     path('accounts/login/', UserLogin.as_view(), name='Inicio_de_sesion'),
