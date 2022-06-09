@@ -21,9 +21,9 @@ class UserAdmin(admin.ModelAdmin):
     list_filter=("name","surname","dni","email","zone")
     search_field=("name","surname","dni","email","zone")
 
-#class AdminAdmin(admin.ModelAdmin):
-#    list_display=("name")
- #   list_filter=("name")
+class AdminAdmin(admin.ModelAdmin):
+    list_display=("name","is_admin")
+    list_filter=("name","is_admin")
 
 
 #class FormularyAdmin(admin.ModelAdmin):
@@ -49,7 +49,7 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(Vaccinator,VaccinatortAdmin)
 admin.site.register(User,UserAdmin)
-#admin.site.register(Admin,AdminAdmin)
+admin.site.register(Admin,AdminAdmin)
 #admin.site.register(Formulary,FormularyAdmin)
 #admin.site.register(Vaccine,VaccineAdmin)
 #admin.site.register(Turn,TurnAdmin)

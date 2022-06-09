@@ -58,8 +58,7 @@ class UserLoginForm(AuthenticationForm):
         if user is not None:
             if user.secondFactor != data['secondFactor']:
                 print(user.secondFactor)
-                raise ValidationError("Ha ingresado incorrectamente alguno de los campos. Tenga en cuenta que la clave debe ser de 6 caracteres o mas. El segundo factor es de 4 digitos y la clave no posee caracteres especiales")
-                
+                raise ValidationError("Ha ingresado incorrectamente alguno de los campos. Tenga en cuenta que la clave debe ser de 6 caracteres o mas. El segundo factor es de 4 digitos y la clave no posee caracteres especiales. ")
         return data
 
     def __init__(self,  *args, **kwargs):
@@ -308,6 +307,73 @@ class VaccinatorLoginForm(AuthenticationForm):
 
     def __init__(self,  *args, **kwargs):
         super(VaccinatorLoginForm,self).__init__(*args, **kwargs)
+
+
+class AdminRegForm(forms.ModelForm):
+
+    
+    password1 = forms.CharField(label='Contraseña', widget = forms.PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese su contraseña',
+                'id':'password1',
+                'required': 'required',
+            }
+        )
+    )
+
+    password2 = forms.CharField(label='Contraseña de confirmacion', widget = forms.PasswordInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese nuevamente su contraseña',
+                'id':'password2',
+                'required': 'required'
+            }
+        )
+    )
+
+    class Meta:
+
+        model = Admin
+        fields = ['name']
+        labels = { 
+            'name':'Nombre',
+        }
+        widgets = {
+            'name': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Nombre',
+                }
+            )
+        }
+
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+
+        if password1 != password2:
+            raise forms.ValidationError('Las contraseñas no coinciden')
+
+        if len(password1) < 6:
+            raise forms.ValidationError('La contraseña debe tener al menos 6 dígitos')
+
+        for letter in password1:
+            if letter == string.whitespace:
+                raise forms.ValidationError('La contraseña no debe contener espacios')
+        
+        return password2
+
+
+    def save(self, commit = True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])    
+
+        if commit:    
+            user.save() 
+        return user
+
 
 
 class VaccinatorRegForm(forms.ModelForm):
