@@ -496,6 +496,14 @@ class FormularioDeIngresoForm(forms.Form):
     ("GRIPE","GRIPE"),
     ("AMARILLA","AMARILLA"),
     ]
+    de_riesgo = forms.BooleanField(required=False,label="¿Usted pertenece al grupo de riesgo?", widget = forms.CheckboxInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': '',
+                'id':'de_riesgo',                
+            }
+        )
+    )
     
     covid_1_date = forms.DateField(required=False,label="Fecha primera dosis covid", widget = forms.DateInput(
             attrs ={
