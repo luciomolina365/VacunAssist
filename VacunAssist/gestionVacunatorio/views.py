@@ -1,6 +1,3 @@
-from pickle import NONE
-from queue import Empty
-from re import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -12,9 +9,11 @@ from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 from .forms import *
-from .models import Vaccinator, User
+from .models import Vaccinator, User, Turn
 from .mail.send_email import *
 from django.contrib import messages
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 
 def saludo(request):
@@ -162,7 +161,7 @@ class ChangeUserEmail(View):
             if user != None:
                 user = user.first()
                 exist=User.objects.filter(email = request.POST["email1"])
-                print(exist.first())
+                #print(exist.first())
                 if exist.first() == None:
                     user.set_new_email(form.cleaned_data.get('email1'))
                     user.save()
@@ -198,13 +197,134 @@ class staffLogin(FormView):
                     raise Vaccinator.DoesNotExist
                 if m.check_password(request.POST['password']):
                     request.session['user'] = {"name":m.name,"admin":m.is_admin}
-                    print(request.session['user'])
+                    #print(request.session['user'])
                     return HttpResponseRedirect(self.get_success_url())
             except Vaccinator.DoesNotExist:
                 pass
         return super(staffLogin,self).dispatch(request,*args, **kwargs)
 
+class FormularioDeIngreso(View):
+    template_name = "modification/changeName.html"
+    form_class = FormularioDeIngresoForm
+    success_url = reverse_lazy('main:homeS') 
 
+
+    def asignar_turno_covid(self,edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None):
+            #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
+
+            if edad < 18:
+                raise ValueError("No deberia asignar un turno(COVID) a un menor de 18")
+
+            if cant_dosis_dadas != None: #solicitar nro de dosis aplicadas al modelo
+                dias = 0
+                rango_edades = list(range(18,61))
+                vacuna = Vaccine.objects.filter(name="COVID")
+                vacuna = vacuna.first()
+                if vacuna == None:
+                    #print(vacuna)
+                    vacuna = Vaccine.objects.create(name="COVID",timeSpan=21)
+                    vacuna = Vaccine.objects.filter(name="COVID")
+                    vacuna = vacuna.first()
+                
+                fecha = date.today()
+
+                if cant_dosis_dadas == 0:
+                    if (edad in rango_edades and de_riesgo) or edad > 60:
+                        dias = 7                    
+                        fecha = fecha.__add__(timedelta(dias))
+        
+                        turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                        return "Asignar turno exitoso"
+                    if edad in rango_edades and not de_riesgo:
+                        dias = 21                 
+                        fecha = fecha.__add__(timedelta(dias))
+
+                        turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                        return "Asignar turno exitoso"
+
+                if cant_dosis_dadas == 1:
+                    fechaDosisAnterior = date.today() #consulta a la bbdd
+                    fechaDosisAnterior = fechaDosisAnterior.__add__(timedelta(22))
+                    hoy = date.today()
+
+                    if fecha.__add__(timedelta(21)).__gt__(date.today()): #si ya pasaron 21 dias
+                        fecha = admissionDate
+
+                        if (edad in rango_edades and de_riesgo) or edad > 60:
+                            dias = 7                    
+                            fecha = fecha.__add__(timedelta(dias))
+                            #turnoAUX = Turn(usuario,vacuna,False,fecha)
+                            #turnoAUX.save()
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                            return "Asignar turno exitoso"
+                        if edad in rango_edades and not de_riesgo:
+                            dias = 21                 
+                            fecha = fecha.__add__(timedelta(dias))
+
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                            return "Asignar turno exitoso"
+                        
+                    else:
+                        if (edad in rango_edades and de_riesgo) or edad > 60:
+                            dias = 7                    
+                            fecha = fecha.__add__(timedelta(dias))
+            
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                            return "Asignar turno exitoso"
+                        if edad in rango_edades and not de_riesgo:
+                            dias = 21                 
+                            fecha = fecha.__add__(timedelta(dias))
+
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                            return "Asignar turno exitoso"
+
+                if cant_dosis_dadas == 2:
+                    return "Ya tiene las dos dosis"
+
+            return 1
+
+    def sacarEdad(self,user):
+        fecha1 = user.dateOfBirth
+        #fecha2 = date.today()
+        #edad = fecha2.year - fecha1.year - 1
+        #if fecha2.month >= fecha1.month:
+        #    if fecha2.day >= fecha1.day:
+        #        edad = edad + 1
+        edad = relativedelta(datetime.now(), fecha1)
+        return edad.years
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        #print(form.data)
+        if form.is_valid():
+            
+            user = User.objects.filter(id = request.user.id)
+            if user.exists():
+                user = user.first()
+                cant = 0
+                if form.data["covid_1_date"] != "":
+                    cant = cant + 1
+                    #print("primera")
+                if form.data["covid_2_date"] != "":
+                    cant = cant + 1
+                    #print("segunda")
+                
+                edad = self.sacarEdad(user)
+                #print(edad)
+                fechaDeHoy = date.today()
+
+                #print(self.asignar_turno_covid(edad,True,cant,user,fechaDeHoy))
+                self.asignar_turno_covid(edad,True,cant,user,fechaDeHoy)
+                
+
+            return redirect(self.success_url)
+            
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form})
 
 
 """

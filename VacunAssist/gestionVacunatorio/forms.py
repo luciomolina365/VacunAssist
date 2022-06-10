@@ -182,7 +182,7 @@ class UserRegForm(forms.ModelForm):
         user = super().save(commit=False)
         
         user.set_password(self.cleaned_data['password1'])        
-        number = randint(0000,9999)
+        number = randint(1000,9999)
         user.set_secondFactor(number)
 
         if commit:
@@ -192,6 +192,7 @@ class UserRegForm(forms.ModelForm):
             #    str(user.secondFactor)
             #)
             user.save() 
+            print(user.secondFactor)
         return user
 
     def get_name(self):
@@ -264,7 +265,7 @@ class ChangeUserEmailForm(forms.Form):
             attrs ={
                 'class':'form-control',
                 'placeholder': 'Ingrese la nueva casilla de correo',
-               'id':'email1',
+                'id':'email1',
                 'required': 'required',
             }
         )
@@ -488,6 +489,39 @@ class VaccinatorRegForm(forms.ModelForm):
 
 #-------------------------------------------------------------------------
 ##FORMULARY  
+
+
+class FormularioDeIngresoForm(forms.Form):
+    vaccines = [("COVID","COVID"),
+    ("GRIPE","GRIPE"),
+    ("AMARILLA","AMARILLA"),
+    ]
+    
+    covid_1_date = forms.DateField(required=False,label="Fecha primera dosis covid", widget = forms.DateInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la fecha de su primera dosis covid',
+                'id':'covid_1_date',
+                'type':'date',
+                'max': date.today(),
+                
+            }
+        )
+    )
+
+    covid_2_date = forms.DateField(required=False,label="Fecha primera dosis covid", widget = forms.DateInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la fecha de su segunda dosis covid',
+                'id':'covid_2_date',
+                'type':'date',
+                'max': date.today(),
+            }
+        )
+    )
+
+
+
 
 class FormularyRegForm(forms.ModelForm):
     class Meta: 

@@ -149,78 +149,7 @@ class Admin(AbstractBaseUser):
 class Formulary(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
     risk=models.BooleanField()
-    admissionDate=models.DateField()
-
-    def save(self):
-        
-        def asignar_turno_covid(edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None):
-            #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
-
-            if edad < 18:
-                raise ValueError("No deberia asignar un turno(COVID) a un menor de 18")
-
-            if cant_dosis_dadas != None: #solicitar nro de dosis aplicadas al modelo
-                dias = 0
-                rango_edades = list(range(18,61))
-                #usuario = "viene del request"
-                vacuna = Vaccine.objects.filter(name="COVID")
-                vacuna = vacuna.first()
-                fecha = date.today()
-
-                if cant_dosis_dadas == 0:
-                    if (edad in rango_edades and de_riesgo) or edad > 60:
-                        dias = 7                    
-                        fecha = fecha.__add__(timedelta(dias))
-        
-                        turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
-                        return "Asignar turno exitoso"
-                    if edad in rango_edades and not de_riesgo:
-                        dias = 21                 
-                        fecha = fecha.__add__(timedelta(dias))
-
-                        turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
-                        return "Asignar turno exitoso"
-
-                if cant_dosis_dadas == 1:
-                    fechaDosisAnterior = date.today() #consulta a la bbdd
-                    fechaDosisAnterior = fechaDosisAnterior.__add__(timedelta(22))
-                    hoy = date.today()
-
-                    if fecha.__add__(timedelta(21)).__gt__(date.today()): #si ya pasaron 21 dias
-                        fecha = admissionDate
-
-                        if (edad in rango_edades and de_riesgo) or edad > 60:
-                            dias = 7                    
-                            fecha = fecha.__add__(timedelta(dias))
-            
-                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
-                            return "Asignar turno exitoso"
-                        if edad in rango_edades and not de_riesgo:
-                            dias = 21                 
-                            fecha = fecha.__add__(timedelta(dias))
-
-                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
-                            return "Asignar turno exitoso"
-                        
-                    else:
-                        if (edad in rango_edades and de_riesgo) or edad > 60:
-                            dias = 7                    
-                            fecha = fecha.__add__(timedelta(dias))
-            
-                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
-                            return "Asignar turno exitoso"
-                        if edad in rango_edades and not de_riesgo:
-                            dias = 21                 
-                            fecha = fecha.__add__(timedelta(dias))
-
-                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
-                            return "Asignar turno exitoso"
-
-                if cant_dosis_dadas == 2:
-                    return "Ya tiene las dos dosis"
-
-            return 1
-            
+    admissionDate=models.DateField()            
 
 
 class Vaccine(models.Model):
@@ -243,6 +172,7 @@ class Turn(models.Model):
     vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
     status=models.BooleanField()
     date=models.DateField()
+
 
 class Forum(models.Model):
     user=models.CharField(max_length=30,null=False)
