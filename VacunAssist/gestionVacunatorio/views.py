@@ -1,3 +1,4 @@
+from pickle import NONE
 from queue import Empty
 from re import template
 from django.http import HttpResponse, HttpResponseRedirect
@@ -42,7 +43,7 @@ class VaccinatorRegistration(CreateView):
     model = Vaccinator
     form_class = VaccinatorRegForm
     template_name = 'registration/registerVaccinator.html'
-    success_url = reverse_lazy('main:Inicio_de_sesion_staff')
+    success_url = reverse_lazy('main:homeA')
 
 class AdminRegistration(CreateView):
     model = Admin
@@ -142,11 +143,11 @@ class ChangeUserName(View):
 class UserLoad(CreateView):
     model = User
     form_class = UserRegForm
-    template_name = 'registration/user_registration.html'
+    template_name = 'registration/addUser.html'
     success_url = reverse_lazy('main:homeA')
 
 
-"""class ChangeUserEmail(View):
+class ChangeUserEmail(View):
     template_name = "modification/changeUserEmail.html"
     form_class = ChangeUserEmailForm
     success_url = reverse_lazy('main:homeS') #CAMBIAR
@@ -158,19 +159,24 @@ class UserLoad(CreateView):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = User.objects.filter(id = request.user.id)
-            if user.exists():
+            if user != None:
                 user = user.first()
-                user.set_new_email(form.cleaned_data.get('email1'))
-                user.save()
-                return redirect(self.success_url)
+                exist=User.objects.filter(email = request.POST["email1"])
+                print(exist.first())
+                if exist.first() == None:
+                    user.set_new_email(form.cleaned_data.get('email1'))
+                    user.save()
+                    return redirect(self.success_url)
+                else:
+                    messages.error(request,"Ya existe un usuario con ese e-mail. Por favor ingrese uno diferente. ")
 
-            return redirect(self.success_url)
+            return render(request, self.template_name, {'form':form })
             
         else:
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
- """
+
 
 class staffLogin(FormView):
     template_name = "login/staff_login.html"
@@ -183,28 +189,23 @@ class staffLogin(FormView):
     def dispatch(self, request, *args,**kwargs):
         if len(request.POST) != 0:
             try:
-                if (request.POST['username']== "admin"):
-                    m= Admin.objects.get(name=request.POST['username'])
-                else:
-                    m = Vaccinator.objects.get(email=request.POST['username'])
+                try:
+                    if (request.POST['username']== "admin"):
+                        m= Admin.objects.get(name=request.POST['username'])
+                    else:
+                        m = Vaccinator.objects.get(email=request.POST['username'])
+                except Admin.DoesNotExist:
+                    raise Vaccinator.DoesNotExist
                 if m.check_password(request.POST['password']):
-                    request.session['user'] = {"name":m.name,"email":m.email}
-
+                    request.session['user'] = {"name":m.name,"admin":m.is_admin}
+                    print(request.session['user'])
                     return HttpResponseRedirect(self.get_success_url())
-                else:
-                    messages.error(self.request,"Contraseña incorrecta")
             except Vaccinator.DoesNotExist:
-                messages.error(self.request,"contraseña incorrecta")
+                pass
         return super(staffLogin,self).dispatch(request,*args, **kwargs)
 
-    def form_valid(self, form):
-        login(self.request, form.get_user())
-        messages.success(self.request,"Inicio de sesion exitoso")
-        return super(staffLogin, self).form_valid(form)
 
-    
-    def form_invalid(self, form):
-        return super().form_invalid(form)
+
 
 """
 class DeleteVaccinator(View):
