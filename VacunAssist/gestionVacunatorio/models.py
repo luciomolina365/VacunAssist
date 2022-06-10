@@ -1,8 +1,8 @@
-from ast import arguments
 import email
 from random import randint
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
+from datetime import date, timedelta
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -151,10 +151,84 @@ class Formulary(models.Model):
     risk=models.BooleanField()
     admissionDate=models.DateField()
 
+    def save(self):
+        
+        def asignar_turno_covid(edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None):
+            #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
+
+            if edad < 18:
+                raise ValueError("No deberia asignar un turno(COVID) a un menor de 18")
+
+            if cant_dosis_dadas != None: #solicitar nro de dosis aplicadas al modelo
+                dias = 0
+                rango_edades = list(range(18,61))
+                #usuario = "viene del request"
+                vacuna = Vaccine.objects.filter(name="COVID")
+                vacuna = vacuna.first()
+                fecha = date.today()
+
+                if cant_dosis_dadas == 0:
+                    if (edad in rango_edades and de_riesgo) or edad > 60:
+                        dias = 7                    
+                        fecha = fecha.__add__(timedelta(dias))
+        
+                        turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
+                        return "Asignar turno exitoso"
+                    if edad in rango_edades and not de_riesgo:
+                        dias = 21                 
+                        fecha = fecha.__add__(timedelta(dias))
+
+                        turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
+                        return "Asignar turno exitoso"
+
+                if cant_dosis_dadas == 1:
+                    fechaDosisAnterior = date.today() #consulta a la bbdd
+                    fechaDosisAnterior = fechaDosisAnterior.__add__(timedelta(22))
+                    hoy = date.today()
+
+                    if fecha.__add__(timedelta(21)).__gt__(date.today()): #si ya pasaron 21 dias
+                        fecha = admissionDate
+
+                        if (edad in rango_edades and de_riesgo) or edad > 60:
+                            dias = 7                    
+                            fecha = fecha.__add__(timedelta(dias))
+            
+                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
+                            return "Asignar turno exitoso"
+                        if edad in rango_edades and not de_riesgo:
+                            dias = 21                 
+                            fecha = fecha.__add__(timedelta(dias))
+
+                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
+                            return "Asignar turno exitoso"
+                        
+                    else:
+                        if (edad in rango_edades and de_riesgo) or edad > 60:
+                            dias = 7                    
+                            fecha = fecha.__add__(timedelta(dias))
+            
+                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
+                            return "Asignar turno exitoso"
+                        if edad in rango_edades and not de_riesgo:
+                            dias = 21                 
+                            fecha = fecha.__add__(timedelta(dias))
+
+                            turno = Turn.objects.create(usuario,vacuna,status=False,date=fecha)
+                            return "Asignar turno exitoso"
+
+                if cant_dosis_dadas == 2:
+                    return "Ya tiene las dos dosis"
+
+            return 1
+            
+
 
 class Vaccine(models.Model):
     name=models.CharField(max_length=30)
     timeSpan=models.IntegerField()
+
+    def __str__(self) -> str:
+        return str(self.name)
 
 class AplicatedVaccine(models.Model):
     dose = [ (1,1),(2,2)]

@@ -1,5 +1,6 @@
-from datetime import date, timedelta
 
+from models import *
+"""
 class Turn():
     user  = None
     vaccine = None
@@ -11,9 +12,9 @@ class Turn():
 
 class UserDDD():
     datos = None
-
-
-def asignar_turno_covid(edad,de_riesgo, cant_dosis_dadas):
+"""
+from datetime import date, timedelta
+def asignar_turno_covid(edad,de_riesgo, cant_dosis_dadas,user):
 
     if edad < 18:
         raise ValueError("No deberia asignar un turno(COVID) a un menor de 18")
@@ -21,8 +22,9 @@ def asignar_turno_covid(edad,de_riesgo, cant_dosis_dadas):
     if cant_dosis_dadas != None: #solicitar nro de dosis aplicadas al modelo
         dias = 0
         rango_edades = list(range(18,61))
-        usuario = UserDDD()
-        vacuna = "consulta a la bbdd" 
+        user = "viene del request"
+        vacuna = Vaccine.objects.first(name="COVID")
+        print(vacuna) 
         fecha = date.today()
 
         if cant_dosis_dadas == 0:
