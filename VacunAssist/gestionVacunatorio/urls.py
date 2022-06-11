@@ -25,8 +25,8 @@ urlpatterns = [
     path("registrar_admin/",AdminRegistration.as_view(), name="Registrar_Admin"),
 
 
-    #path("eliminar_vacunador/",login_required(DeleteVaccinator.as_view()), name = "Eliminar_Vacunador"),
-    #path("listar_vacunadores",login_required(list_vaccinator), name = "Listar_Vacunadores"),
+   # path("eliminar_vacunador/",DeleteVaccinator, name = "Eliminar_Vacunador"),
+    path("listar_vacunadores/",ListVaccinator.as_view(), name = "Listar_Vacunadores"),
 
     path('accounts/admin_login/', staffLogin.as_view(), name='Inicio_de_sesion_staff'),
 

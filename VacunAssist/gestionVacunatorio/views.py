@@ -38,11 +38,20 @@ class UserRegistration(CreateView):
     template_name = 'registration/signIn.html'
     success_url = reverse_lazy('main:Inicio_de_sesion')
 
+    def form_valid(self, form):
+        messages.success(self.request,"Registro exitoso")
+        return super(UserRegistration, self).form_valid(form)
+    
+
 class VaccinatorRegistration(CreateView):
     model = Vaccinator
     form_class = VaccinatorRegForm
     template_name = 'registration/registerVaccinator.html'
     success_url = reverse_lazy('main:homeA')
+
+    def form_valid(self, form):
+        messages.success(self.request,"Registro exitoso")
+        return super(VaccinatorRegistration, self).form_valid(form)
 
 class AdminRegistration(CreateView):
     model = Admin
@@ -72,13 +81,13 @@ class UserLogin(FormView):
 
     def form_valid(self, form):
         login(self.request, form.get_user())
-        user = form.get_user() 
-        formulary1 = Formulary.objects.filter(user = user)
-        formulary1 = formulary1.first()
-        if formulary1 == None:
-            self.success_url = reverse_lazy('main:Formulario_de_ingreso')
-            return HttpResponseRedirect(self.get_success_url())
+        dato=Formulary.objects.filter(user=self.request.user)
+        print(dato.first())
         messages.success(self.request,"Inicio de sesion exitoso")
+        if (dato.first()== None):
+            new_url = reverse_lazy('main:Formulario_de_ingreso')
+            return HttpResponseRedirect(new_url)
+            
         return super(UserLogin, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -203,14 +212,31 @@ class staffLogin(FormView):
                     raise Vaccinator.DoesNotExist
                 if m.check_password(request.POST['password']):
                     request.session['user'] = {"name":m.name,"admin":m.is_admin}
-                    #print(request.session['user'])
+                    messages.success(request,"Inicio de sesion exitoso. ")
                     return HttpResponseRedirect(self.get_success_url())
             except Vaccinator.DoesNotExist:
                 pass
         return super(staffLogin,self).dispatch(request,*args, **kwargs)
 
+
+class ListVaccinator(View):
+    template_name = "listVaccinators.html"
+
+    def get(self, request, *args, **kwargs):
+        vaccinators = Vaccinator.objects.all()
+        return render(request, self.template_name, {'vacunadores': vaccinators})
+
+    def post(self, request, *args, **kwargs):
+        vaccinator = Vaccinator.objects.get(id=request.POST["vacunador_id"])
+        vaccinator.delete()
+        messages.success(request," Eliminacion exitosa. ")
+        vaccinators = Vaccinator.objects.all()
+        return render(request, self.template_name, {'vacunadores': vaccinators})
+       
+            
+
 class FormularioDeIngreso(View):
-    template_name = "modification/changeName.html"
+    template_name = "formulary.html"
     form_class = FormularioDeIngresoForm
     success_url = reverse_lazy('main:homeS')
     
@@ -438,7 +464,6 @@ class DeleteVaccinator(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
-
 def list_vaccinator(request):
     vaccinator = Vaccinator.objects.all()
     data = {
@@ -446,23 +471,6 @@ def list_vaccinator(request):
     }
     return render(request, "listVaccinators.html", data)                                                         
 
-def changePassword(request):
-    if request.method == "POST":
-        form = changeUserPasswordForm(request.POST)
-        print(request.POST)
-        print('0'*20)
-        if form.is_valid():
-            print('1'*20)
-            data = request.POST["email"]
-            user = User.objects.get(email=data)
-            if user is not None:
-                print('2'*20)
-                user.password = request.POST["password"]
-                user.save()
-                sendchangePassword(user.email,user.name)
-                return render(request,'home.html')
-    form = changeUserPasswordForm()
-    return render(request,"modification/changePass.html", {'form':form})
 """
     
 
