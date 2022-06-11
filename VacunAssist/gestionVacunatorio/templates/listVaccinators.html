@@ -79,33 +79,57 @@
       </head>
       <body class="text-center">
         
-    <main class="form-signin w-100 m-auto">
+    <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
         <h1 class="h3 mb-3 fw-normal">Vacunadores</h1>
-        {% for v in vaccinator %}
-           <div class="vacunadores">
- 
-                <div class="contenedor_vacunadores">
-                  <li>
-                  <div class="detalle">
-                    <h5>Apellido: {{ v.surname }}</h5>
-                    <h5>Nombre: {{ v.name }}</h5>
-                    <h4>Dni: {{ v.dni }}</h4>
-                  </div>
-                  </li>
-                </div>
-           </div>
+        {% if messages %}
+  
+          {% for message in messages %}
+          <center>
+            <div  class="alert alert-success" role="alert" style="width: 100%;">
+              {{message}}
+            </div>
+          </center>
           {% endfor %}
+    
+      {% endif %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col"> # </th>
+              <th scope="col"> Nombre </th>
+              <th scope="col"> Apellido </th>
+              <th scope="col"> DNI </th>
+              <th scope="col"> Email </th>
+              <th scope="col"> Zona </th>
+              <th scope="col"> Acciones </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vacunador in vacunadores %}
+            <tr>
+              <th scope="row">{{ vacunador.id }}</th>
+              <td>{{ vacunador.name }}</td>
+              <td>{{ vacunador.surname }}</td>
+              <td>{{ vacunador.dni }}</td>
+              <td>vacunador.email</td>
+              <td>Zona </td>
+              <td>
+              <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+              <input type="hidden" id="vacunador_id" name="vacunador_id" value="{{vacunador.id}}">
+              <button onclick="return confirm('¿Estás seguro de que deseas eliminar este vacunador?');" class="btn btn-danger mt-2 ml-2">Eliminar</a>
+              </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      
       </div>
       </form>
       <br>
-      <br>
-      <button type="button" class="btn btn-primary" onclick="history.back()">Atras</button>
-      <br>
-      <br>
-      <br>
-      <a class="btn btn-primary" href="../Home/">Volver al inicio</a>
+      <a class="btn btn-primary" href="../HomeAdmin/">Volver al inicio</a>
     </main>
     
     
