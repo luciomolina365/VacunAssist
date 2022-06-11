@@ -209,7 +209,7 @@ class FormularioDeIngreso(View):
     success_url = reverse_lazy('main:homeS') 
 
 
-    def asignar_turno_covid(self,edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None):
+    def asignar_turno_covid(self,edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None,fecha_primera_dosis = None):
             #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
 
             if edad < 18:
@@ -231,52 +231,52 @@ class FormularioDeIngreso(View):
                 if cant_dosis_dadas == 0:
                     if (edad in rango_edades and de_riesgo) or edad > 60:
                         dias = 7                    
-                        fecha = fecha.__add__(timedelta(dias))
+                        fecha = admissionDate.__add__(timedelta(dias))
         
                         turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
-                        return "Asignar turno exitoso"
+                        return f"GRUPO DE RIESGO - 0/2 dosis - {admissionDate} (HOY) ---> {fecha}"
                     if edad in rango_edades and not de_riesgo:
                         dias = 21                 
-                        fecha = fecha.__add__(timedelta(dias))
+                        fecha = admissionDate.__add__(timedelta(dias))
 
                         turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
-                        return "Asignar turno exitoso"
+                        return f"GRUPO NORMAL - 0/2 dosis - {admissionDate} (HOY) ---> {fecha}"
 
                 if cant_dosis_dadas == 1:
-                    fechaDosisAnterior = date.today() #consulta a la bbdd
-                    fechaDosisAnterior = fechaDosisAnterior.__add__(timedelta(22))
-                    hoy = date.today()
+                    fecha_primera_dosis = date.fromisoformat(fecha_primera_dosis)
+                    #fechaAUX = fechaAUX.__add__(timedelta(22))
+                    #print(fecha_primera_dosis)
+                    #print(fecha_primera_dosis.__add__(timedelta(21)))
 
-                    if fecha.__add__(timedelta(21)).__gt__(date.today()): #si ya pasaron 21 dias
-                        fecha = admissionDate
+                    if fecha_primera_dosis.__add__(timedelta(21)).__lt__(date.today()): #si ya pasaron 21 dias
+                        fecha_primera_dosis = admissionDate
 
                         if (edad in rango_edades and de_riesgo) or edad > 60:
-                            dias = 7                    
-                            fecha = fecha.__add__(timedelta(dias))
+                            dias = 7                     
+                            fechaFinal = fecha_primera_dosis.__add__(timedelta(dias))
                             #turnoAUX = Turn(usuario,vacuna,False,fecha)
                             #turnoAUX.save()
-                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
-                            return "Asignar turno exitoso"
-                        if edad in rango_edades and not de_riesgo:
-                            dias = 21                 
-                            fecha = fecha.__add__(timedelta(dias))
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+                            return f"GRUPO DE RIESGO - PLAZO CUMPLIDO - 1/2 dosis - {fecha_primera_dosis} (HOY) ---> {fechaFinal}"
 
-                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
-                            return "Asignar turno exitoso"
+                        if edad in rango_edades and not de_riesgo:
+                            dias = 21                  
+                            fechaFinal = fecha_primera_dosis.__add__(timedelta(dias))
+
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+                            return f"GRUPO NORMAL - PLAZO CUMPLIDO - 1/2 dosis - {fecha_primera_dosis} (HOY) ---> {fechaFinal}"
                         
-                    else:
-                        if (edad in rango_edades and de_riesgo) or edad > 60:
-                            dias = 7                    
-                            fecha = fecha.__add__(timedelta(dias))
-            
-                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
-                            return "Asignar turno exitoso"
-                        if edad in rango_edades and not de_riesgo:
-                            dias = 21                 
-                            fecha = fecha.__add__(timedelta(dias))
+                    else: #si NO pasaron 21 dias
+                        dias = 21                 
+                        fechaFinal = admissionDate.__add__(timedelta(dias))
 
-                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
-                            return "Asignar turno exitoso"
+                        if (edad in rango_edades and de_riesgo) or edad > 60:           
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+                            return f"GRUPO DE RIESGO - PLAZO ///NO/// CUMPLIDO - {admissionDate} (HOY) ---> {fechaFinal}"
+
+                        if edad in rango_edades and not de_riesgo:                    
+                            turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+                            return f"GRUPO NORMAL - PLAZO ///NO/// CUMPLIDO - {admissionDate} (HOY) ---> {fechaFinal}"
 
                 if cant_dosis_dadas == 2:
                     return "Ya tiene las dos dosis"
@@ -298,27 +298,44 @@ class FormularioDeIngreso(View):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        #print(form.data)
+        print(form.data)
         if form.is_valid():
-            
+            #print('is_valid')
             user = User.objects.filter(id = request.user.id)
             if user.exists():
                 user = user.first()
                 cant = 0
                 if form.data["covid_1_date"] != "":
                     cant = cant + 1
+                    fecha_primera_dosis =  date.fromisoformat(form.data["covid_1_date"])
+                    #print(fecha_primera_dosis)
                     #print("primera")
                 if form.data["covid_2_date"] != "":
                     cant = cant + 1
                     #print("segunda")
                 
                 edad = self.sacarEdad(user)
-                #print(edad)
                 fechaDeHoy = date.today()
 
+                try:
+                    if form.data["de_riesgo"] == 'on':
+                        de_riesgo = True
+                except KeyError:
+                    de_riesgo = False
+
+                #print(de_riesgo)
                 #print(self.asignar_turno_covid(edad,True,cant,user,fechaDeHoy))
-                self.asignar_turno_covid(edad,True,cant,user,fechaDeHoy)
-                
+                if form.data["covid_1_date"] == "" and form.data["covid_2_date"] != "":
+
+                    print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"]))
+                    return redirect(self.success_url)
+
+                if form.data["covid_2_date"] == "" and form.data["covid_1_date"] != "":
+
+                    print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_1_date"]))
+                    return redirect(self.success_url)
+
+                print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
 
             return redirect(self.success_url)
             

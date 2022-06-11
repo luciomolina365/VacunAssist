@@ -496,10 +496,11 @@ class FormularioDeIngresoForm(forms.Form):
     ("GRIPE","GRIPE"),
     ("AMARILLA","AMARILLA"),
     ]
+
     de_riesgo = forms.BooleanField(required=False,label="¿Usted pertenece al grupo de riesgo?", widget = forms.CheckboxInput(
             attrs ={
                 'class':'form-control',
-                'placeholder': '',
+                'placeholder': '¿Usted pertenece al grupo de riesgo?',
                 'id':'de_riesgo',                
             }
         )
@@ -517,7 +518,7 @@ class FormularioDeIngresoForm(forms.Form):
         )
     )
 
-    covid_2_date = forms.DateField(required=False,label="Fecha primera dosis covid", widget = forms.DateInput(
+    covid_2_date = forms.DateField(required=False,label="Fecha segunda dosis covid", widget = forms.DateInput(
             attrs ={
                 'class':'form-control',
                 'placeholder': 'Ingrese la fecha de su segunda dosis covid',
@@ -528,6 +529,17 @@ class FormularioDeIngresoForm(forms.Form):
         )
     )
 
+    gripe_date = forms.DateField(required=False,label="Fecha de su última vacuna de la gripe.", widget = forms.DateInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la fecha de su última vacuna de la gripe.',
+                'id':'gripe_date',
+                'type':'date',
+                'max': date.today(),
+                
+            }
+        )
+    )
 
 
 
