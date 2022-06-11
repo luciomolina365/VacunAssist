@@ -1,4 +1,3 @@
-from urllib import request
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -10,7 +9,7 @@ from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 from .forms import *
-from .models import Vaccinator, User, Turn
+from .models import Vaccinator, User, Turn, Formulary
 from .mail.send_email import *
 from django.contrib import messages
 from dateutil.relativedelta import relativedelta
@@ -82,7 +81,13 @@ class UserLogin(FormView):
 
     def form_valid(self, form):
         login(self.request, form.get_user())
+        dato=Formulary.objects.filter(user=self.request.user)
+        print(dato.first())
         messages.success(self.request,"Inicio de sesion exitoso")
+        if (dato.first()== None):
+            new_url = reverse_lazy('main:Formulario_de_ingreso')
+            return HttpResponseRedirect(new_url)
+            
         return super(UserLogin, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -231,7 +236,7 @@ class ListVaccinator(View):
             
 
 class FormularioDeIngreso(View):
-    template_name = "modification/changeName.html"
+    template_name = "formulary.html"
     form_class = FormularioDeIngresoForm
     success_url = reverse_lazy('main:homeS')
     

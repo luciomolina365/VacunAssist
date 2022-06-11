@@ -113,8 +113,8 @@
               <td>{{ vacunador.name }}</td>
               <td>{{ vacunador.surname }}</td>
               <td>{{ vacunador.dni }}</td>
-              <td>vacunador.email</td>
-              <td>Zona </td>
+              <td>{{ vacunador.email }}</td>
+              <td>{{ vacunador.zone }}</td>
               <td>
               <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
               <input type="hidden" id="vacunador_id" name="vacunador_id" value="{{vacunador.id}}">

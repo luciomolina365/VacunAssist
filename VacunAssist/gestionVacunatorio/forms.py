@@ -408,8 +408,14 @@ class VaccinatorRegForm(forms.ModelForm):
     
     class Meta:
 
+        zones = [
+        ("Terminal de ómnibus","Terminal de ómnibus"), 
+        ("Municipalidad de La Plata","Municipalidad de La Plata"),
+        ('Cementerio','Cementerio')
+        ]
+
         model = Vaccinator
-        fields = ['dni','name','surname','email']
+        fields = ['dni','name','surname','email','zone']
         labels = { 
             'dni':'Numero de documento',
             'name':'Nombre',
@@ -436,8 +442,7 @@ class VaccinatorRegForm(forms.ModelForm):
                     'placeholder': 'Email',
                 }
             ),
-        
-
+            'zone':forms.Select(choices=zones)
         }
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
