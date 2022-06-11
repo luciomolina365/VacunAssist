@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 from .forms import *
-from .models import Vaccinator, User, Turn
+from .models import Vaccinator, User, Turn, Formulary
 from .mail.send_email import *
 from django.contrib import messages
 from dateutil.relativedelta import relativedelta
@@ -72,6 +72,12 @@ class UserLogin(FormView):
 
     def form_valid(self, form):
         login(self.request, form.get_user())
+        user = form.get_user() 
+        formulary1 = Formulary.objects.filter(user = user)
+        formulary1 = formulary1.first()
+        if formulary1 == None:
+            self.success_url = reverse_lazy('main:Formulario_de_ingreso')
+            return HttpResponseRedirect(self.get_success_url())
         messages.success(self.request,"Inicio de sesion exitoso")
         return super(UserLogin, self).form_valid(form)
 
@@ -218,10 +224,35 @@ class FormularioDeIngreso(View):
         edad = relativedelta(datetime.now(), fecha1)
         return edad.years 
 
-    #def asignar_turno_gripe(usuario):
-    #    pass
-    #    if self.sacarEdad(usuario.dateOfBirth):
-    #       pass
+    def asignar_turno_gripe(self,usuario):
+        formulario1 = Formulary.objects.filter(user = usuario).first()
+        if formulario1 == None:
+            raise ValueError("ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO")
+            return "ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO"
+
+    
+        if formulario1.admissionDate.__add__(timedelta(days=365)).__lt__(date.today()):
+            raise ValueError("ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO")
+            return "ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO"
+  
+        de_riesgo = formulario1.risk
+
+        if self.sacarEdad(usuario) > 60 or (self.sacarEdad(usuario) < 60 and de_riesgo):
+            fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=12))
+
+        if self.sacarEdad(usuario) < 60:
+            fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=24))
+    
+        vacuna = Vaccine.objects.filter(name="GRIPE").first()
+        if vacuna == None:
+            vacuna = Vaccine.objects.create(name="GRIPE", timeSpan=12.24)
+            vacuna = Vaccine.objects.filter(name="GRIPE").first()
+            
+        Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+
+        return "Turno creado con exito"
+            
+            
             
         
 
@@ -312,29 +343,57 @@ class FormularioDeIngreso(View):
             user = User.objects.filter(id = request.user.id)
             if user.exists():
                 user = user.first()
-                
-                #COVID-------------------------------------------------------------------------------------------------------------------
                 cant = 0
+
                 if form.data["covid_1_date"] != "":
                     cant = cant + 1
                     fecha_primera_dosis =  date.fromisoformat(form.data["covid_1_date"])
-                    #print(fecha_primera_dosis)
-                    #print("primera")
+                    C1D = date.fromisoformat(form.data["covid_1_date"])
+                else:
+                    C1D = None
+
                 if form.data["covid_2_date"] != "":
                     cant = cant + 1
-                    #print("segunda")
+                    C2D = date.fromisoformat(form.data["covid_2_date"])
+                else:
+                    C2D = None
                 
-                edad = self.sacarEdad(user)
-                fechaDeHoy = date.today()
-
                 try:
                     if form.data["de_riesgo"] == 'on':
                         de_riesgo = True
                 except KeyError:
                     de_riesgo = False
 
-                #print(de_riesgo)
-                #print(self.asignar_turno_covid(edad,True,cant,user,fechaDeHoy))
+                try:
+                    if form.data["amarilla_ok"] == 'on':
+                        amarilla = True
+                except KeyError:
+                    amarilla = False
+
+                if form.data["gripe_date"] != "":
+                    GD = date.fromisoformat(form.data["gripe_date"])
+                else:
+                    GD = None
+                
+                edad = self.sacarEdad(user)
+                fechaDeHoy = date.today()
+
+
+                #///////////////////////////////TEST
+                Formulary.objects.create(
+                    user = user,
+                    risk = de_riesgo, 
+                    admissionDate = fechaDeHoy,
+                    covid_1_date = C1D,
+                    covid_2_date = C2D,
+                    gripe_date = GD,
+                    amarilla_ok = amarilla
+                )
+
+                if form.data["gripe_date"] != "":
+                    print(self.asignar_turno_gripe(user))
+                #///////////////////////////////TEST
+
                 if form.data["covid_1_date"] == "" and form.data["covid_2_date"] != "":
 
                     print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"]))
@@ -346,9 +405,6 @@ class FormularioDeIngreso(View):
                     return redirect(self.success_url)
 
                 print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
-
-                #GRIPE-------------------------------------------------------------------------------------------------------------------
-
 
             return redirect(self.success_url)
             
