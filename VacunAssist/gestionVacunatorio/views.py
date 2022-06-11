@@ -233,8 +233,24 @@ class ListVaccinator(View):
 class FormularioDeIngreso(View):
     template_name = "modification/changeName.html"
     form_class = FormularioDeIngresoForm
-    success_url = reverse_lazy('main:homeS') 
+    success_url = reverse_lazy('main:homeS')
+    
+    def sacarEdad(self,user):
+        fecha1 = user.dateOfBirth
+        #fecha2 = date.today()
+        #edad = fecha2.year - fecha1.year - 1
+        #if fecha2.month >= fecha1.month:
+        #    if fecha2.day >= fecha1.day:
+        #        edad = edad + 1
+        edad = relativedelta(datetime.now(), fecha1)
+        return edad.years 
 
+    #def asignar_turno_gripe(usuario):
+    #    pass
+    #    if self.sacarEdad(usuario.dateOfBirth):
+    #       pass
+            
+        
 
     def asignar_turno_covid(self,edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None,fecha_primera_dosis = None):
             #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
@@ -310,15 +326,7 @@ class FormularioDeIngreso(View):
 
             return 1
 
-    def sacarEdad(self,user):
-        fecha1 = user.dateOfBirth
-        #fecha2 = date.today()
-        #edad = fecha2.year - fecha1.year - 1
-        #if fecha2.month >= fecha1.month:
-        #    if fecha2.day >= fecha1.day:
-        #        edad = edad + 1
-        edad = relativedelta(datetime.now(), fecha1)
-        return edad.years
+    
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': self.form_class})
@@ -331,6 +339,8 @@ class FormularioDeIngreso(View):
             user = User.objects.filter(id = request.user.id)
             if user.exists():
                 user = user.first()
+                
+                #COVID-------------------------------------------------------------------------------------------------------------------
                 cant = 0
                 if form.data["covid_1_date"] != "":
                     cant = cant + 1
@@ -363,6 +373,9 @@ class FormularioDeIngreso(View):
                     return redirect(self.success_url)
 
                 print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
+
+                #GRIPE-------------------------------------------------------------------------------------------------------------------
+
 
             return redirect(self.success_url)
             

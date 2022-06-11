@@ -541,6 +541,15 @@ class FormularioDeIngresoForm(forms.Form):
         )
     )
 
+    amarilla_ok = forms.BooleanField(required=False,label="¿Usted tiene la vacuna para la fiebre amarilla?", widget = forms.CheckboxInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': '¿Usted tiene la vacuna para la fiebre amarilla?',
+                'id':'amarilla_ok',                
+            }
+        )
+    )
+    
 
 
 class FormularyRegForm(forms.ModelForm):

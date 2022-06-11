@@ -108,6 +108,13 @@ class Vaccinator(AbstractBaseUser):
     is_active=models.BooleanField(default=True)
     is_vaccinator=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
+    
+    zones = [
+        ("Terminal de ómnibus","Terminal de ómnibus"), 
+        ("Municipalidad de La Plata","Municipalidad de La Plata"),
+        ("Cementerio","Cementerio")
+    ]
+    zone=models.CharField(max_length=30 , choices = zones, default= "Cementerio")
 
 
     USERNAME_FIELD = 'email'
@@ -148,17 +155,27 @@ class Admin(AbstractBaseUser):
 
 class Formulary(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
-    risk=models.BooleanField()
-    admissionDate=models.DateField()            
+    risk = models.BooleanField()
+    admissionDate = models.DateField()
+
+    covid_1_date = models.DateField(null = True)
+    covid_2_date = models.DateField(null = True)
+    gripe_date = models.DateField(null = True)
+    amarilla_ok = models.BooleanField(null = True, default = False)
+
 
 
 class Vaccine(models.Model):
-    name=models.CharField(max_length=30)
-    timeSpan=models.IntegerField()
+    name = models.CharField(max_length=30)
+    timeSpan = models.IntegerField()
+    description = models.CharField(default = None, null = True, max_length = 140) 
 
     def __str__(self) -> str:
         return str(self.name)
 
+
+
+"""
 class AplicatedVaccine(models.Model):
     dose = [ (1,1),(2,2)]
 
@@ -166,6 +183,7 @@ class AplicatedVaccine(models.Model):
     vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
     doseNumber=models.IntegerField(choices = dose, blank=True)
     aplicationDate=models.DateField()
+"""
 
 class Turn(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
