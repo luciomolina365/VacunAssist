@@ -196,12 +196,14 @@ class staffLogin(FormView):
                 try:
                     if (request.POST['username']== "admin"):
                         m= Admin.objects.get(name=request.POST['username'])
+                        zona = None
                     else:
                         m = Vaccinator.objects.get(email=request.POST['username'])
+                        zona= m.zone
                 except Admin.DoesNotExist:
                     raise Vaccinator.DoesNotExist
                 if m.check_password(request.POST['password']):
-                    request.session['user'] = {"name":m.name,"admin":m.is_admin}
+                    request.session['user'] = {"name":m.name,"admin":m.is_admin,"zone":zona}
                     messages.success(request,"Inicio de sesion exitoso. ")
                     return HttpResponseRedirect(self.get_success_url())
             except Vaccinator.DoesNotExist:
@@ -222,6 +224,34 @@ class ListVaccinator(View):
         vaccinators = Vaccinator.objects.all()
         return render(request, self.template_name, {'vacunadores': vaccinators})
        
+
+class ListTurnZone(View):
+    template_name = "listTurnZone.html"
+
+    def get(self, request, *args, **kwargs):
+        zoneFilter=request.session['user']['zone']
+        if zoneFilter == None:
+            turns=Turn.objects.all()
+        else:
+            print(zoneFilter)
+            users=User.objects.filter(zone=zoneFilter)
+            print(users)
+            turns=[]
+            
+            for u in users:
+                try:
+                    aux=Turn.objects.get(user_id = u.id)
+                    aux.vaccine_id=Vaccine.objects.get(id = aux.vaccine_id)
+                    aux.user_id=u
+                    turns.append(aux)
+                except Turn.DoesNotExist:
+                    pass
+        print(turns)
+        return render(request, self.template_name, {'turnos': turns})
+
+    
+
+
 class FormularioDeIngreso(View):
     template_name = "formulary.html"
     form_class = FormularioDeIngresoForm
