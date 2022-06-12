@@ -267,9 +267,11 @@ class FormularioDeIngreso(View):
 
         if self.sacarEdad(usuario) > 60 or (self.sacarEdad(usuario) < 60 and de_riesgo):
             fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=12))
-
-        if self.sacarEdad(usuario) < 60:
-            fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=24))
+            print(f'///GRIPE/// - GRUPO DE RIESGO - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
+        else: 
+            if self.sacarEdad(usuario) < 60:
+                fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=24))
+                print(f'///GRIPE/// - GRUPO NORMAL - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
     
         vacuna = Vaccine.objects.filter(name="GRIPE").first()
         if vacuna == None:
@@ -428,14 +430,16 @@ class FormularioDeIngreso(View):
                     gripe_date = GD,
                     amarilla_ok = amarilla
                 )
-                #///////////////////////////////TEST
-                print(self.asignar_turno_gripe(user))
-                #///////////////////////////////TEST
-
+                try:
+                    print(self.asignar_turno_gripe(user))
+                except ValueError:
+                    messages.error(request, "No se le asignó un turno para la vacuna de la gripe, porque no pasó un año desde su última dosis.")
+                    
                 if form.data["covid_1_date"] == "" and form.data["covid_2_date"] != "":
                     try: 
                         print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"]))
-                        messages.success(request, "Envío de formulario exitoso.")    
+                        messages.success(request, "Envío de formulario exitoso.")
+
                         return redirect(self.success_url)
                     except ValueError:
                         messages.error(request, "No se puede asignar un turno para la vacuna de covid a usuarios menores de edad")

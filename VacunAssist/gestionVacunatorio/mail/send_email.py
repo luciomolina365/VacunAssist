@@ -63,6 +63,21 @@ def send_passwordConfirm_email(email_receiver, name):
   '''
   send_mail(email_receiver, 'VacunAssist - Clave Modificada', texte, html)
 
+def send_turn_confirmation_email(email_receiver, name, zone, turn ):
+  html = f'''
+  <html>
+  <body>
+  <h3>Hola {name}, su solicitud para la vacuna de la fiebre amallida fue confirmada.  </h3>
+  <h3>Su turno será el día {turn.date} en el vacunatorio de zona {zone}. </h3>
+  <br>
+  <br>
+  </body>
+  </html>'''
+  texte =f'''
+  Hola {name}, su solicitud para la vacuna de la fiebre amallida fue confirmada.
+  Su turno será el día {turn.date} en el vacunatorio de zona {zone}.
+  '''
 
+  send_mail(email_receiver, 'VacunAssist - Confirmación de turno fiebre amarilla.', texte, html)
 #send_secondFactor_email('yo.y.mis.videos@gmail.com', 'Lucio', 666)
 #send_passwordConfirm_email('tobias77aj@gmail.com', 'Tobi, paraguayo')
