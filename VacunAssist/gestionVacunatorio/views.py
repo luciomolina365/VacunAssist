@@ -26,7 +26,23 @@ def homeAdmin(request):
     return render(request,'homeAdmin.html')
 
 def homeWithSession(request):
-    return render(request,'homeWithSession.html')
+    #print(request.user.id)
+    user = User.objects.filter(id = request.user.id)
+    user = user.first()
+    if user != None:
+        #print("Usuario existe")
+        formulary1 = Formulary.objects.filter(user_id = request.user.id)
+        formulary1 = formulary1.first()
+        if formulary1 != None:
+            #print(formulary1)
+            #print('Tengo formulario')
+            return render(request,'homeWithSession.html')
+        else:
+            #print("NO tengo formulario") 
+            return redirect(reverse_lazy('main:Formulario_de_ingreso'))
+            
+
+    return render(request,'homeWithSession.html') #POR LAS DUDAS
 
 def vaccinatorManager(request):
     return render(request,'vaccinatorsManager.html')
@@ -341,7 +357,22 @@ class FormularioDeIngreso(View):
     
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {'form': self.form_class})
+        #print(request.user.id)
+        user = User.objects.filter(id = request.user.id)
+        user = user.first()
+        if user != None:
+            #print("Usuario existe")
+            formulary1 = Formulary.objects.filter(user_id = request.user.id)
+            formulary1 = formulary1.first()
+            if formulary1 != None:
+                #print(formulary1)
+                #print('Tengo formulario')
+                return redirect(self.success_url)
+            else:
+                #print("NO tengo formulario") 
+                return render(request, self.template_name, {'form': self.form_class})
+
+        return render(request, self.template_name, {'form': self.form_class}) # POR LAS DUDAS
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -403,7 +434,7 @@ class FormularioDeIngreso(View):
 
                 if form.data["covid_1_date"] == "" and form.data["covid_2_date"] != "":
                     try: 
-                        self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"])
+                        print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"]))
                         messages.success(request, "Envío de formulario exitoso.")    
                         return redirect(self.success_url)
                     except ValueError:
@@ -414,7 +445,7 @@ class FormularioDeIngreso(View):
                 if form.data["covid_2_date"] == "" and form.data["covid_1_date"] != "":
 
                     try: 
-                        self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_1_date"])
+                        print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_1_date"]))
                         messages.success(request, "Envío de formulario exitoso.")
                         return redirect(self.success_url)
                     except ValueError:
@@ -430,7 +461,15 @@ class FormularioDeIngreso(View):
                     except ValueError:
                         messages.error(request, "No se puede asignar un turno para la vacuna de covid a usuarios menores de edad")
                         return render(request, self.template_name, {'form':self.form_class}) 
-                    
+                
+                if form.data["covid_2_date"] == "" and form.data["covid_1_date"] == "":
+                    try:                         
+                        print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
+                        messages.success(request, "Envío de formulario exitoso.")
+                        return redirect(self.success_url)
+                    except ValueError:
+                        messages.error(request, "No se puede asignar un turno para la vacuna de covid a usuarios menores de edad")
+                        return render(request, self.template_name, {'form':self.form_class}) 
 
             return redirect(self.success_url)
             
