@@ -186,11 +186,11 @@ class UserRegForm(forms.ModelForm):
         user.set_secondFactor(number)
 
         if commit:
-            #send_secondFactor_email(
-            #    str(user.email),
-            #    str(self.get_name()),
-            #    str(user.secondFactor)
-            #)
+            send_secondFactor_email(
+                str(user.email),
+                str(self.get_name()),
+                str(user.secondFactor)
+            )
             user.save() 
             print(user.secondFactor)
         return user
