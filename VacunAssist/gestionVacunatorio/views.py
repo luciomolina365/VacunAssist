@@ -264,10 +264,6 @@ class FormularioDeIngreso(View):
 
         return "Turno GRIPE creado con exito"
             
-            
-            
-        
-
     def asignar_turno_covid(self,edad,de_riesgo, cant_dosis_dadas,usuario,admissionDate=None,fecha_primera_dosis = None):
             #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
 

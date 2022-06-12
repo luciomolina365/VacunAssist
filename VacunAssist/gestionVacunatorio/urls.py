@@ -25,7 +25,7 @@ urlpatterns = [
     path("registrar_admin/",AdminRegistration.as_view(), name="Registrar_Admin"),
 
 
-   # path("eliminar_vacunador/",DeleteVaccinator, name = "Eliminar_Vacunador"),
+    #path("eliminar_vacunador/",DeleteVaccinator, name = "Eliminar_Vacunador"),
     path("listar_vacunadores/",ListVaccinator.as_view(), name = "Listar_Vacunadores"),
 
     path('accounts/admin_login/', staffLogin.as_view(), name='Inicio_de_sesion_staff'),
@@ -34,7 +34,7 @@ urlpatterns = [
     path('cambio_de_contraseña/', login_required(ChangeUserPassword.as_view()) , name="Cambiar_contraseña"),
     #path('cierre_de_sesion/', logout_then_login, name = 'Cierre_de_sesion')
     path('cierre_de_sesion/', logout_request, name = 'Cierre_de_sesion'),
-    path('formulario_de_ingreso/', FormularioDeIngreso.as_view(), name = 'Formulario_de_ingreso'),
+    path('formulario_de_ingreso/', login_required(FormularioDeIngreso.as_view()), name = 'Formulario_de_ingreso'),
 
     
     
