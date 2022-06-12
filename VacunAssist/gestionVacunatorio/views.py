@@ -415,14 +415,14 @@ class FormularioDeIngreso(View):
 
                     try: 
                         print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_1_date"]))
-                        messages.success(request, "Envió de formulario ")
+                        messages.success(request, "Envió de formulario exitoso.")
                         return redirect(self.success_url)
                     except ValueError:
                         messages.error(request, "No se puede asignar un turno para la vacuna de covid a usuarios menores de edad")
                         return render(request, self.template_name, {'form':self.form_class}) 
 
 
-                #print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
+                print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
 
             return redirect(self.success_url)
             
