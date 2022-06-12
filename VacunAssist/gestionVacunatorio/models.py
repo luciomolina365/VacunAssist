@@ -188,8 +188,9 @@ class AplicatedVaccine(models.Model):
 class Turn(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
     vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
-    status=models.BooleanField()
-    date=models.DateField()
+    status = models.BooleanField()
+    date = models.DateField()
+    accepted = models.BooleanField(default=False)
 
 
 class Forum(models.Model):
