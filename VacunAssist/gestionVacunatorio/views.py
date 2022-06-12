@@ -25,7 +25,6 @@ def home(request):
 def homeAdmin(request):
     return render(request,'homeAdmin.html')
 
-
 def homeWithSession(request):
     return render(request,'homeWithSession.html')
 
@@ -42,7 +41,6 @@ class UserRegistration(CreateView):
         messages.success(self.request,"Registro exitoso")
         return super(UserRegistration, self).form_valid(form)
     
-
 class VaccinatorRegistration(CreateView):
     model = Vaccinator
     form_class = VaccinatorRegForm
@@ -57,8 +55,7 @@ class AdminRegistration(CreateView):
     model = Admin
     form_class = AdminRegForm
     template_name = 'registration/registerAdmin.html'
-    success_url = reverse_lazy('main:Inicio_de_sesion_staff')
-     
+    success_url = reverse_lazy('main:Inicio_de_sesion_staff')   
 
 def logout_request(request):
     logout(request)
@@ -93,14 +90,11 @@ class UserLogin(FormView):
     def form_invalid(self, form):
         return super().form_invalid(form)
 
-
 def custom_logout(request):
     print('Loggin out {}'.format(request.user))
     logout(request)
     print(request.user)
     return render(request,'indexHome.html')
-
-
 
 class ChangeUserPassword(View):
     template_name = "modification/changePass.html"
@@ -153,13 +147,11 @@ class ChangeUserName(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form})
 
-
 class UserLoad(CreateView):
     model = User
     form_class = UserRegForm
     template_name = 'registration/addUser.html'
     success_url = reverse_lazy('main:homeA')
-
 
 class ChangeUserEmail(View):
     template_name = "modification/changeUserEmail.html"
@@ -190,8 +182,6 @@ class ChangeUserEmail(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
-
-
 class staffLogin(FormView):
     template_name = "login/staff_login.html"
     form_class = VaccinatorLoginForm
@@ -218,7 +208,6 @@ class staffLogin(FormView):
                 pass
         return super(staffLogin,self).dispatch(request,*args, **kwargs)
 
-
 class ListVaccinator(View):
     template_name = "listVaccinators.html"
 
@@ -233,8 +222,6 @@ class ListVaccinator(View):
         vaccinators = Vaccinator.objects.all()
         return render(request, self.template_name, {'vacunadores': vaccinators})
        
-            
-
 class FormularioDeIngreso(View):
     template_name = "formulary.html"
     form_class = FormularioDeIngresoForm
@@ -256,8 +243,7 @@ class FormularioDeIngreso(View):
             raise ValueError("ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO")
             return "ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO"
 
-    
-        if formulario1.admissionDate.__add__(timedelta(days=365)).__lt__(date.today()):
+        if formulario1.gripe_date.__add__(timedelta(days=365)).__gt__(date.today()):
             raise ValueError("ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO")
             return "ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO"
   
@@ -276,7 +262,7 @@ class FormularioDeIngreso(View):
             
         Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
 
-        return "Turno creado con exito"
+        return "Turno GRIPE creado con exito"
             
             
             
@@ -286,7 +272,7 @@ class FormularioDeIngreso(View):
             #admissionDate se ingresa si el metodo se llama desde la creacion del formulario
 
             if edad < 18:
-                raise ValueError("No deberia asignar un turno(COVID) a un menor de 18")
+                return ValueError("No deberia asignar un turno(COVID) a un menor de 18")
 
             if cant_dosis_dadas != None: #solicitar nro de dosis aplicadas al modelo
                 dias = 0
@@ -421,16 +407,26 @@ class FormularioDeIngreso(View):
                 #///////////////////////////////TEST
 
                 if form.data["covid_1_date"] == "" and form.data["covid_2_date"] != "":
-
-                    print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"]))
-                    return redirect(self.success_url)
+                    try: 
+                        print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_2_date"]))
+                        return redirect(self.success_url)
+                    except ValueError:
+                        messages.error(request, "No se puede asignar un turno para la vacuna de covid a usuarios menores de edad")
+                        return render(request, self.template_name, {'form':self.form_class})
+                    
 
                 if form.data["covid_2_date"] == "" and form.data["covid_1_date"] != "":
 
-                    print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_1_date"]))
-                    return redirect(self.success_url)
+                    try: 
+                        print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy,form.data["covid_1_date"]))
+                        messages.success(request, "Envió de formulario ")
+                        return redirect(self.success_url)
+                    except ValueError:
+                        messages.error(request, "No se puede asignar un turno para la vacuna de covid a usuarios menores de edad")
+                        return render(request, self.template_name, {'form':self.form_class}) 
 
-                print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
+
+                #print(self.asignar_turno_covid(edad,de_riesgo,cant,user,fechaDeHoy))
 
             return redirect(self.success_url)
             

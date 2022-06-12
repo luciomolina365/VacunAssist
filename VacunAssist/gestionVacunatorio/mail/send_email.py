@@ -9,8 +9,8 @@ def send_mail(email_receiver, messageSubject, texte, html ):
 
 
   email_address = 'wolftech.contacto@gmail.com'
-  email_password = 'quiquewolff'
-
+  #email_password = 'quiquewolff'
+  email_password = 'nvtllybnhbnoyfza'
 
   message = MIMEMultipart("alternative")
   message["Subject"] = messageSubject
