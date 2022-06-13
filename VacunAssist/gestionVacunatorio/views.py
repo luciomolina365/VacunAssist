@@ -198,6 +198,32 @@ class ChangeUserEmail(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
+class ListUserTurn(View):
+    template_name = "listUserTurn.html"
+
+    def get(self, request, *args, **kwargs):   
+        try:
+            turnos=Turn.objects.filter(user_id=request.user.id)
+            turns=[] 
+            for t in turnos:
+                if (t.date.__le__(date.today)):
+                    aux=t
+                    aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                    aux.user_id=request.user.name
+                    turns.append(aux)
+                else:
+                    pass
+        except Turn.DoesNotExist:
+            pass
+        if len(turns) == 0:
+            messages.success(request, "Usted no posee turnos pendientes")
+
+        return render(request, self.template_name, {'turnos': turns})
+
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+#Staff
+
 class staffLogin(FormView):
     template_name = "login/staff_login.html"
     form_class = VaccinatorLoginForm
@@ -511,39 +537,5 @@ class FormularioDeIngreso(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form})
 
-
-"""
-class DeleteVaccinator(View):
-    template_name = "modification/deleteVaccinator.html"
-    form_class = DeleteVaccinatorForm
-    success_url = reverse_lazy('main:homeS') #CAMBIAR
-    denied_url = reverse_lazy('main:Eliminar_Vacunador')
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {'form': self.form_class})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            vaccdni = form.cleaned_data.get('vaccinator1')
-            user = Vaccinator.objects.filter(dni=vaccdni)
-            if user.exists():
-                user.delete()
-            else: 
-                messages.info(request,'El DNI ingresado no se encuentra en el sistema') 
-                redirect(self.denied_url) 
-            return redirect(self.denied_url)         
-        else:
-            form = self.form_class(request.POST)
-            return render(request, self.template_name, {'form':form })
-
-def list_vaccinator(request):
-    vaccinator = Vaccinator.objects.all()
-    data = {
-        'vaccinator': vaccinator
-    }
-    return render(request, "listVaccinators.html", data)                                                         
-
-"""
     
 

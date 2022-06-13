@@ -28,6 +28,8 @@ urlpatterns = [
     #path("eliminar_vacunador/",DeleteVaccinator, name = "Eliminar_Vacunador"),
     path("listar_vacunadores/",ListVaccinator.as_view(), name = "Listar_Vacunadores"),
 
+    path("turnos_pendientes/",ListUserTurn.as_view(), name = "Listar_Turnos"),
+
     path("listar_turno_zona/",ListTurnZone.as_view(), name = "Listar_Turnos_Zona"),
 
     path('accounts/admin_login/', staffLogin.as_view(), name='Inicio_de_sesion_staff'),
