@@ -51,15 +51,28 @@ def send_secondFactor_email(email_receiver, name, secondFactor):
 
 
 def send_passwordConfirm_email(email_receiver, name):
+    html = f'''
+    <html>
+    <body>
+    <h3>Hola {name}, le informamos que su clave a sido modificada con exito.</h3>
+    <br>
+    </body>
+    </html>'''
+    texte =f'''
+    Hola {name}, le informamos que su clave a sido modificada con exito.
+    '''
+    send_mail(email_receiver, 'VacunAssist - Clave Modificada', texte, html)
+
+def send_password_email(email_receiver, name, password):
   html = f'''
   <html>
   <body>
-  <h3>Hola {name}, informamos que su clave a sido modificada con exito.</h3>
+  <h3>Hola {name}, ha sido registrado como vacunador. Le informamos que su clave es </h3> <h1>{password} </h1>.
   <br>
   </body>
   </html>'''
   texte =f'''
-  Hola {name}, le agradecemos que se haya registrado en nuestra pagina. Este es el segundo factor para su inicio de sesion:  
+  Hola {name}, ha sido registrado como vacunador. Le informamos que su clave es {password} .
   '''
   send_mail(email_receiver, 'VacunAssist - Clave Modificada', texte, html)
 
