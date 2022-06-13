@@ -323,7 +323,7 @@ class FormularioDeIngreso(View):
             print(f'///GRIPE/// - GRUPO DE RIESGO - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
         else: 
             if self.sacarEdad(usuario) < 60:
-                fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=24))
+                fechaFinal = formulario1.admissionDate.__add__(timedelta(weeks=26))
                 print(f'///GRIPE/// - GRUPO NORMAL - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
     
         vacuna = Vaccine.objects.filter(name="GRIPE").first()
