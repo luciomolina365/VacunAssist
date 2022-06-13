@@ -481,10 +481,12 @@ class VaccinatorRegForm(forms.ModelForm):
         user.set_password(self.cleaned_data['password1'])    
 
         if commit:    
+            send_password_email(
+                str(user.email),
+                str(self.get_name()),
+                str(self.cleaned_data['password1']))
             user.save() 
         return user
-
-
 
     def get_name(self):
         name = self.cleaned_data['name']

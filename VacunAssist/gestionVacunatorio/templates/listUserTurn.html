@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Lista de Turnos en zona</title>
+        <title>Listado de turnos del usuario</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -82,7 +82,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Listado de turnos en la zona</h1>
+        <h1 class="h3 mb-3 fw-normal">Listado de turnos del usuario</h1>
         {% if messages %}
   
           {% for message in messages %}
@@ -95,9 +95,8 @@
     
       {% endif %}
 
-      {% if turnos == None %}
-          No hay turnos en esta zona 
-        {% endif %}
+
+
 
         <table class="table">
           <thead>
@@ -106,7 +105,6 @@
               <th scope="col"> Usuario </th>
               <th scope="col"> Vacuna </th>
               <th scope="col"> Fecha </th>
-              <th scope="col"> Estado </th>
             </tr>
           </thead>
           <tbody>
@@ -116,7 +114,6 @@
               <td>{{ turno.user_id }}</td>
               <td>{{ turno.vaccine_id }}</td>
               <td>{{ turno.date }}</td>
-              <td>{{ turno.status }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -125,7 +122,7 @@
       </div>
       </form>
       <br>
-      <a class="btn btn-primary" href="../HomeAdmin/">Volver al inicio</a>
+      <a class="btn btn-primary" href="../Home/">Volver al inicio</a>
     </main>
       </body>
     </html>
