@@ -272,24 +272,21 @@ class ListTurnZone(View):
 
     def get(self, request, *args, **kwargs):
         zoneFilter=request.session['user']['zone']
-        if zoneFilter == None:
-            turns=Turn.objects.all()
-        else:
-            print(zoneFilter)
-            users=User.objects.filter(zone=zoneFilter)
-            print(users)
-            turns=[]
-            
-            for u in users:
-                try:
-                    aux=Turn.objects.get(user_id = u.id)
-                    aux.vaccine_id=Vaccine.objects.get(id = aux.vaccine_id)
-                    aux.user_id=u
-                    turns.append(aux)
-                except Turn.DoesNotExist:
-                    pass
-        print(turns)
-        return render(request, self.template_name, {'turnos': turns})
+        data=[]
+        users=User.objects.filter(zone=zoneFilter)
+        for u in users:
+            try:
+                aux=Turn.objects.filter(user_id = u.id)
+                for t in aux:
+                    if (t.date.__le__(date.today)):
+                        turn=t
+                        turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+
+        return render(request, self.template_name, {'turnos': data})
 
     
 
@@ -539,3 +536,18 @@ class FormularioDeIngreso(View):
 
     
 
+
+
+"""if zoneFilter == None:
+            turns=Turn.objects.all()
+
+            for t in turns:
+                try:
+                    aux=t
+                    aux.vaccine_id=Vaccine.objects.get(id = aux.vaccine_id)
+                    aux.user_id=User.objects.get(id = aux.user_id)
+                    data.append(aux)
+                except Turn.DoesNotExist:
+                    pass
+
+        else:"""

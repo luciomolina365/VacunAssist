@@ -59,12 +59,16 @@
         <li class="nav-item active px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../HomeAdmin/">Inicio</a>
         </li>
+        {% if request.session.user.admin == False %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../carga_usuario/">Cargar Usuario</a>
         </li>
+        {% endif %}
+        {% if request.session.user.admin == False %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../listar_turno_zona/">Listar turnos de la zona</a>
         </li>
+        {% endif %}
         {% if request.session.user.admin %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../gestion_de_vacunadores/'>Gestion de Vacunadores</a>
