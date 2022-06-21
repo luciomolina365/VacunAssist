@@ -272,6 +272,17 @@ class ChangeUserEmailForm(forms.Form):
     )  
 
 
+class ChangeUserZoneForm(forms.Form):
+
+    zones = [
+        ("Terminal de ómnibus","Terminal de ómnibus"), 
+        ("Municipalidad de La Plata","Municipalidad de La Plata"),
+        ('Cementerio','Cementerio')
+        ]
+
+    zone = forms.ChoiceField(choices=zones)
+
+
     
     
     

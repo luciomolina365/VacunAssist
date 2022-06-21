@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Listado de turnos del usuario</title>
+        <title>Historial del usuario</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -82,7 +82,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Listado de turnos del usuario</h1>
+        <h1 class="h3 mb-3 fw-normal">Historial del usuario</h1>
         {% if messages %}
   
           {% for message in messages %}

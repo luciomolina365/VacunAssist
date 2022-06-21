@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_protect
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 from .forms import *
-from .models import Vaccinator, User, Turn, Formulary
+from .models import Vaccinator, User, Turn, Formulary,Information
 from .mail.send_email import *
 from django.contrib import messages
 from dateutil.relativedelta import relativedelta
@@ -43,6 +43,9 @@ def homeWithSession(request):
             
 
     return render(request,'homeWithSession.html') #POR LAS DUDAS
+
+def ModificationManager(request):
+    return render(request,'modificationManager.html')
 
 def vaccinatorManager(request):
     return render(request,'vaccinatorsManager.html')
@@ -198,18 +201,46 @@ class ChangeUserEmail(View):
             form = self.form_class(request.POST)
             return render(request, self.template_name, {'form':form })
 
+
+class ChangeUserZone(View):
+    template_name = "modification/changeUserZone.html"
+    form_class = ChangeUserZoneForm
+    success_url = reverse_lazy('main:homeS')
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(id = request.user.id)
+            if user != None:
+                user = user.first()
+                user.set_new_zone(form.cleaned_data.get('zone'))
+                user.save()
+                messages.success(request,"La modificacion de su nueva zona a sido un exito ")
+                return redirect(self.success_url)
+            
+            return render(request, self.template_name, {'form':form })
+        else:
+            form = self.form_class(request.POST)
+            return render(request, self.template_name, {'form':form })
+
+
+
 class ListUserTurn(View):
     template_name = "listUserTurn.html"
 
     def get(self, request, *args, **kwargs):   
         try:
-            turnos=Turn.objects.filter(user_id=request.user.id)
+            turnos=Turn.objects.order_by("date").filter(user_id=request.user.id)
             turns=[] 
             for t in turnos:
-                if (t.date.__le__(date.today)):
+                if (t.date >= date.today()):
                     aux=t
                     aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                     aux.user_id=request.user.name
+                    aux.zone=request.user.zone
                     turns.append(aux)
                 else:
                     pass
@@ -217,6 +248,29 @@ class ListUserTurn(View):
             pass
         if len(turns) == 0:
             messages.success(request, "Usted no posee turnos pendientes")
+
+        return render(request, self.template_name, {'turnos': turns})
+
+class ListUserHistory(View):
+    template_name = "listUserHistory.html"
+
+    def get(self, request, *args, **kwargs):   
+        try:
+            turnos=Turn.objects.order_by("date").filter(user_id=request.user.id)
+            turns=[] 
+            for t in turnos:
+                if (t.date < date.today()):
+                    aux=t
+                    aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                    aux.user_id=request.user.name
+                    aux.zone=request.user.zone
+                    turns.append(aux)
+                else:
+                    pass
+        except Turn.DoesNotExist:
+            pass
+        if len(turns) == 0:
+            messages.success(request, "Usted no posee turnos en su historial")
 
         return render(request, self.template_name, {'turnos': turns})
 
@@ -276,19 +330,100 @@ class ListTurnZone(View):
         users=User.objects.filter(zone=zoneFilter)
         for u in users:
             try:
-                aux=Turn.objects.filter(user_id = u.id)
+                aux=Turn.objects.order_by("date").filter(user_id = u.id)
                 for t in aux:
-                    if (t.date.__le__(date.today)):
+                    if (t.date >=date.today):
                         turn=t
                         turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                         turn.user_id=User.objects.get(id = t.user_id)
                         data.append(turn)
             except Turn.DoesNotExist:
                 pass
+        if len(data) == 0:
+            messages.success(request, "No hay turnos en la zona")
 
         return render(request, self.template_name, {'turnos': data})
 
-    
+class ListCovid(View):
+    template_name = "listVaccines/listCovid.html"
+
+    def get(self, request, *args, **kwargs):
+        id_covid=Vaccine.objects.get(name = "COVID")
+        data=[]
+        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
+
+        for t in turns:
+            try:
+                    if (t.date < date.today()):
+                        turn=t
+                        turn.vaccine_id="COVID"
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay historial de turnos de tipo Covid")
+
+        return render(request, self.template_name, {'turnos': data})
+
+class ListGripe(View):
+    template_name = "listVaccines/listGripe.html"
+
+    def get(self, request, *args, **kwargs):
+        id_covid=Vaccine.objects.get(name = "GRIPE")
+        data=[]
+        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
+
+        for t in turns:
+            try:
+                    if (t.date < date.today()):
+                        turn=t
+                        turn.vaccine_id="GRIPE"
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay historial de turnos de tipo Gripe")
+
+        return render(request, self.template_name, {'turnos': data})
+
+
+###COMO SE LLAMA A AMARILLA?  Y SE ROMPE CUANDO NO EXISTE LA VACUNA
+class ListAmarilla(View):
+    template_name = "listVaccines/listAmarilla.html"
+
+    def get(self, request, *args, **kwargs):
+        id_covid=Vaccine.objects.get(name = "AMARILLA")
+        data=[]
+        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
+
+        for t in turns:
+            try:
+                    if (t.date < date.today()):
+                        turn=t
+                        turn.vaccine_id="AMARILLA"
+
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay historial de turnos de tipo Fiebre amarilla")
+
+        return render(request, self.template_name, {'turnos': data})
+
+class Info(View):
+    template_name = "info.html"
+
+    def get(self, request, *args, **kwargs):
+       
+        data=Information.objects.all()
+
+        return render(request, self.template_name, {'informacion': data})
 
 
 class FormularioDeIngreso(View):

@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Listado de turnos del usuario</title>
+        <title>Cambiar Zona</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -19,6 +19,7 @@
         
     
     <link href="{% static 'gestionVacunatorio/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+  
     
         <style>
           .bd-placeholder-img {
@@ -79,52 +80,37 @@
       </head>
       <body class="text-center">
         
-    <main class="m-auto">
+    <main class="form-signin w-100 m-auto">
+
+      {% if messages %}
+
+      {% for message in messages %}
+      <center>
+        <div  class="alert alert-success" role="alert" style="width: 100%;">
+          {{message}}
+        </div>
+      </center>
+      {% endfor %}
+  
+    {% endif %}
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Listado de turnos del usuario</h1>
-        {% if messages %}
-  
-          {% for message in messages %}
-          <center>
-            <div  class="alert alert-success" role="alert" style="width: 100%;">
-              {{message}}
-            </div>
-          </center>
-          {% endfor %}
+        <h1 class="h3 mb-3 fw-normal">Cambiar Zona del usuario</h1>
     
-      {% endif %}
-
-
-
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col"> N° Turno  </th>
-              <th scope="col"> Usuario </th>
-              <th scope="col"> Vacuna </th>
-              <th scope="col"> Fecha </th>
-              <th scope="col"> Zona </th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for turno in turnos %}
-            <tr>
-              <th scope="row">{{ turno.id }}</th>
-              <td>{{ turno.user_id }}</td>
-              <td>{{ turno.vaccine_id }}</td>
-              <td>{{ turno.date }}</td>
-              <td>{{ turno.zone }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      
+        <div style="width: 100%; margin:auto">
+          {{form|crispy}}
+          <br><button class="w-100 btn btn-lg btn-primary" type="submit" class="">Listo</button>
       </div>
       </form>
       <br>
+      <br>
+      <br>
+      <br>
+      <br>
       <a class="btn btn-primary" href="../Home/">Volver al inicio</a>
     </main>
+    
+    
+        
       </body>
     </html>

@@ -97,6 +97,8 @@ class User(AbstractBaseUser):
     def set_new_email(self, email):
         self.email = email
 
+    def set_new_zone(self, zone):
+        self.zone = zone
 
     
 class Vaccinator(AbstractBaseUser):
@@ -173,17 +175,14 @@ class Vaccine(models.Model):
     def __str__(self) -> str:
         return str(self.name)
 
+class Information(models.Model):
+    name=models.CharField(default = None,max_length=30)
+    email=models.CharField(default = None,max_length=30)
+    tel=models.IntegerField(default = None)
+    description=models.CharField(default = None,max_length=200)
 
 
-"""
-class AplicatedVaccine(models.Model):
-    dose = [ (1,1),(2,2)]
 
-    formulary = models.ForeignKey("gestionVacunatorio.Formulary", on_delete=models.CASCADE)
-    vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
-    doseNumber=models.IntegerField(choices = dose, blank=True)
-    aplicationDate=models.DateField()
-"""
 
 class Turn(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
