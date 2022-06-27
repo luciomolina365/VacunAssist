@@ -71,6 +71,7 @@ def requestAmarillaTurn(request):
             if formulario1.amarilla == False:
                 date = datetime.today.__add__(timedelta(days=365)) # DENTRO DE UN AÑO
                 Turn.objects.create(user = user, vaccine = vacuna, status = False, date = date, accepted = False)
+                #TurnRequest.objects.create(user = user, vaccine = vacuna, accepted = False)
                 messages.success(request, "Solicitud exitosa.")
                 return render(request,'homeWithSession.html')
         else:
