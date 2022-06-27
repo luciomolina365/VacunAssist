@@ -189,7 +189,7 @@ class Turn(models.Model):
     vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
     status = models.BooleanField()
     date = models.DateField()
-    accepted = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=True)
 
 
 class Forum(models.Model):
