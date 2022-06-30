@@ -46,6 +46,60 @@ def homeWithSession(request):
 
     return render(request,'homeWithSession.html') #POR LAS DUDAS
 
+def requestAmarillaTurn(request):
+
+    def requestTurn(request, user, date = None):
+        vacuna = Vaccine.objects.filter(name="AMARILLA").first()
+        #SI NO HAY VACUNA 
+        if vacuna == None:
+            vacuna = Vaccine.objects.create(name="AMARILLA", timeSpan=1)
+            vacuna = Vaccine.objects.filter(name="AMARILLA").first()
+        
+        formulario1 = Formulary.objects.filter(user = user).first()
+        #SI TIENE FORMULARIO
+        if formulario1 != None:
+            #SI TIENE LA VACUNA
+            if formulario1.amarilla == True:
+                messages.error(request, "Usted ya tiene la vacuna de la fiebre amarilla.")
+                return render(request,'homeWithSession.html')
+
+            #SI ///NO/// TIENE LA VACUNA |||Y||| YA TIENE UNA SOLICITUD PENDIENTE
+            aux_turn = Turn.objects.filter(vaccine = "AMARILLA").first()
+            if formulario1.amarilla == False and aux_turn != None:
+                messages.error(request, "Usted ya tiene una solicitud pendiente.")
+                return render(request,'homeWithSession.html')
+
+            #SI ///NO/// TIENE LA VACUNA
+            if formulario1.amarilla == False:
+                date = datetime.today.__add__(timedelta(days=365)) # DENTRO DE UN AÑO
+                Turn.objects.create(user = user, vaccine = vacuna, status = False, date = date, accepted = False)
+                #TurnRequest.objects.create(user = user, vaccine = vacuna, accepted = False)
+                messages.success(request, "Solicitud exitosa.")
+                return render(request,'homeWithSession.html')
+        else:
+            messages.error(request, "Usted no completó el formulario de ingreso.")
+            return render(request,'homeWithSession.html') 
+
+
+
+
+
+    user = User.objects.filter(id = request.user.id)
+    user = user.first()
+    if user != None:
+        formulary1 = Formulary.objects.filter(user_id = request.user.id)
+        formulary1 = formulary1.first()
+        if formulary1 != None:
+            return render(request,'homeWithSession.html')
+        else:
+            #mensaje de error??
+            return redirect(reverse_lazy('main:Formulario_de_ingreso'))
+            
+
+    return render(request,'homeWithSession.html') #POR LAS DUDAS
+    
+    
+
 def ModificationManager(request):
     return render(request,'modificationManager.html')
 
@@ -520,6 +574,16 @@ class FormularioDeIngreso(View):
             return "ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO"
         if formulario1.gripe_date != None:
             if formulario1.gripe_date.__add__(timedelta(days=365)).__gt__(date.today()):
+                vacuna = Vaccine.objects.filter(name="GRIPE").first()
+                if vacuna == None:
+                    vacuna = Vaccine.objects.create(name="GRIPE", timeSpan=12.24)
+                    vacuna = Vaccine.objects.filter(name="GRIPE").first()
+                
+                fechaFinal = formulario1.admissionDate.__add__(timedelta(days=365))
+                Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+                print(f'///GRIPE/// - PLAZO ///NO/// CUMPLIDO - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
+                return "Turno GRIPE creado con exito"
+
                 return ValueError("ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO")
                 return "ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO"
   
