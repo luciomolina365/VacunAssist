@@ -26,6 +26,7 @@ urlpatterns = [
     path("turnos_pendientes/",ListUserTurn.as_view(), name = "Listar_Turnos"),
     path("historial_turnos/",ListUserHistory.as_view(), name = "Listar_Historial"),
     path("info_vacunatorios/",Info.as_view(), name = "Informacion"),
+    path("solicitar_turno_fiebre_amarilla/",requestAmarillaTurn, name = "Informacion"),
   
 
 

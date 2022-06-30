@@ -59,7 +59,7 @@ def requestAmarillaTurn(request):
         #SI TIENE FORMULARIO
         if formulario1 != None:
             #SI TIENE LA VACUNA
-            if formulario1.amarilla == True:
+            if formulario1.amarilla_ok == True:
                 messages.error(request, "Usted ya tiene la vacuna de la fiebre amarilla.")
                 return render(request,'homeWithSession.html')
 
@@ -90,6 +90,7 @@ def requestAmarillaTurn(request):
         formulary1 = Formulary.objects.filter(user_id = request.user.id)
         formulary1 = formulary1.first()
         if formulary1 != None:
+            requestTurn(request, user, date = None)
             return render(request,'homeWithSession.html')
         else:
             #mensaje de error??
