@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Historial de Gripe </title>
+        <title>Lista de Vacunatorios del Sistema</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -82,7 +82,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Historial de vacuna Gripe</h1>
+        <h1 class="h3 mb-3 fw-normal">Vacunatorios</h1>
         {% if messages %}
   
           {% for message in messages %}
@@ -94,32 +94,25 @@
           {% endfor %}
     
       {% endif %}
-
-
         <table class="table">
           <thead>
             <tr>
-              <th scope="col"> N° Turno  </th>
-              <th scope="col"> Usuario </th>
-              <th scope="col"> Vacuna </th>
-              <th scope="col"> Fecha </th>
-              <th scope="col"> Zona </th>
-              <th scope="col"> Estado </th>
+              <th scope="col"> Nombre </th>
+              <th scope="col"> Email </th>
+              <th scope="col"> Telefono </th>
+              <th scope="col"> Descripcion </th>
+              <th scope="col"> Acciones </th>
             </tr>
           </thead>
           <tbody>
-            {% for turno in turnos %}
+            {% for vacunatorio in vacunatorios %}
             <tr>
-              <th scope="row">{{ turno.id }}</th>
-              <td>{{ turno.user_id }}</td>
-              <td>{{ turno.vaccine_id }}</td>
-              <td>{{ turno.date }}</td>
-              <td>{{ turno.zone }}</td>
-              {% if  turno.status == True %}
-                <td> Presente </td>
-              {% else %}
-              <td> Ausente </td>
-              {% endif %}
+              <td>{{ vacunatorio.name }}</td>
+              <td>{{ vacunatorio.email }}</td>
+              <td>{{ vacunatorio.tel }}</td>
+              <td>{{ vacunatorio.description }}</td>
+              <td>
+                <a class="btn btn-info mt-2 ml-2" href="../modificar_vacunatorio/{{vacunatorio.id}}" name="name" value="{{vacunatorio.id}}">Modificar</a>
             </tr>
             {% endfor %}
           </tbody>
@@ -130,5 +123,8 @@
       <br>
       <a class="btn btn-primary" href="../HomeAdmin/">Volver al inicio</a>
     </main>
+    
+    
+        
       </body>
     </html>

@@ -104,6 +104,7 @@
               <th scope="col"> Vacuna </th>
               <th scope="col"> Fecha </th>
               <th scope="col"> Zona </th>
+              <th scope="col"> Estado </th>
             </tr>
           </thead>
           <tbody>
@@ -114,8 +115,13 @@
               <td>{{ turno.vaccine_id }}</td>
               <td>{{ turno.date }}</td>
               <td>{{ turno.zone }}</td>
+              {% if  turno.status == True %}
+                <td> Presente </td>
+              {% else %}
+                <td> Ausente </td>
+              {% endif %}
             </tr>
-            {% endfor %}
+            
           </tbody>
         </table>
       

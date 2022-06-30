@@ -582,17 +582,56 @@ class ForumRegForm(forms.ModelForm):
         fields = ('title','description',"date")
         
 
-class DeleteVaccinatorForm(forms.Form):
 
-    vaccinator1 = forms.IntegerField(label='DNI del vacunador a eliminar', widget = forms.NumberInput(
+
+
+class informationRegForm(forms.ModelForm):
+
+    class Meta:
+
+        zones = [
+        ("Terminal de ómnibus","Terminal de ómnibus"), 
+        ("Municipalidad de La Plata","Municipalidad de La Plata"),
+        ('Cementerio','Cementerio')
+        ]
+
+        genders = [
+        ("Masculino","Masculino"),
+        ("Femenino","Femenino"),
+        ("Otro","Otro")
+        ]
+
+        model = Information
+        fields = ['name','email','tel','description']
+        widgets = {
+            'name': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Nombre',
+                }
+            ),
+            'email': forms.EmailInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Email',
+                }
+            ),
+            'tel': forms.NumberInput(),
+
+        }
+class ChangeVacEmailForm(forms.ModelForm):
+    email = forms.EmailField(label='Nueva Email', widget = forms.EmailInput(
             attrs ={
                 'class':'form-control',
-                'placeholder': 'Ingrese el DNI del vacunador a eliminar',
-                'id':'vaccinator1',
+                'placeholder': 'Ingrese la nueva casilla de correo',
+                'id':'email',
                 'required': 'required',
             }
         )
-    ) 
+    )  
+
+
+
 """
  
  class AdminsLoginForm(AuthenticationForm):
@@ -620,15 +659,4 @@ class DeleteVaccinatorForm(forms.Form):
             model = Forum
             fields = ('title','description',"date")
             
-class DeleteVaccinatorForm(forms.Form):
-
-        vaccinator1 = forms.IntegerField(label='DNI del vacunador a eliminar', widget = forms.NumberInput(
-                attrs ={
-                    'class':'form-control',
-                    'placeholder': 'Ingrese el DNI del vacunador a eliminar',
-                    'id':'vaccinator1',
-                    'required': 'required',
-                }
-            )
-        ) 
-        """
+"""

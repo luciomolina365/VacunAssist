@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Historial de Gripe </title>
+        <title>Lista de usuarios del Sistema</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -82,7 +82,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Historial de vacuna Gripe</h1>
+        <h1 class="h3 mb-3 fw-normal">Usuarios</h1>
         {% if messages %}
   
           {% for message in messages %}
@@ -94,32 +94,33 @@
           {% endfor %}
     
       {% endif %}
-
-
         <table class="table">
           <thead>
             <tr>
-              <th scope="col"> N° Turno  </th>
-              <th scope="col"> Usuario </th>
-              <th scope="col"> Vacuna </th>
-              <th scope="col"> Fecha </th>
+              <th scope="col"> # </th>
+              <th scope="col"> Nombre </th>
+              <th scope="col"> Apellido </th>
+              <th scope="col"> DNI </th>
+              <th scope="col"> Email </th>
               <th scope="col"> Zona </th>
-              <th scope="col"> Estado </th>
+              <th scope="col"> Acciones </th>
             </tr>
           </thead>
           <tbody>
-            {% for turno in turnos %}
+            {% for usuario in usuarios %}
             <tr>
-              <th scope="row">{{ turno.id }}</th>
-              <td>{{ turno.user_id }}</td>
-              <td>{{ turno.vaccine_id }}</td>
-              <td>{{ turno.date }}</td>
-              <td>{{ turno.zone }}</td>
-              {% if  turno.status == True %}
-                <td> Presente </td>
-              {% else %}
-              <td> Ausente </td>
-              {% endif %}
+              <th scope="row">{{ usuario.id }}</th>
+              <td>{{ usuario.name }}</td>
+              <td>{{ usuario.surname }}</td>
+              <td>{{ usuario.dni }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>{{ usuario.zone }}</td>
+              <td>
+              <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+              <input type="hidden" id="usuario_id" name="usuario_id" value="{{usuario.id}}">
+              <button onclick="return confirm('¿Estás seguro de que deseas eliminar este vacunador?');" class="btn btn-danger mt-2 ml-2">Eliminar</a>
+              </form>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -130,5 +131,8 @@
       <br>
       <a class="btn btn-primary" href="../HomeAdmin/">Volver al inicio</a>
     </main>
+    
+    
+        
       </body>
     </html>

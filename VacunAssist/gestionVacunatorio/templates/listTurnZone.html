@@ -107,6 +107,7 @@
               <th scope="col"> Vacuna </th>
               <th scope="col"> Fecha </th>
               <th scope="col"> Estado </th>
+              <th scope="col"> Acciones </th>
             </tr>
           </thead>
           <tbody>
@@ -117,6 +118,14 @@
               <td>{{ turno.vaccine_id }}</td>
               <td>{{ turno.date }}</td>
               <td>{{ turno.status }}</td>
+              <td>
+                <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                  <input type="hidden" id="turno_id" name="turno_id" value="{{turno.id}}">
+                  <button onclick="return confirm('¿Estás seguro de que deseas marcar como presente el turno?');" class="btn btn-Info mt-2 ml-2">Marcar Asistencia</a>
+                  </form>
+
+
+              </td>
             </tr>
             {% endfor %}
           </tbody>

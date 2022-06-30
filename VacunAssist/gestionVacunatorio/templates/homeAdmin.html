@@ -63,16 +63,21 @@
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../carga_usuario/">Cargar Usuario</a>
         </li>
-        {% endif %}
-        {% if request.session.user.admin == False %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../listar_turno_zona/">Listar turnos de la zona</a>
         </li>
         {% endif %}
+
         {% if request.session.user.admin %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../gestion_de_vacunadores/'>Gestion de Vacunadores</a>
         </li>
+        <li class="nav-item px-lg-4">
+          <a class="nav-link text-uppercase text-expanded" href='../listar_usuarios/'>Lista de usuarios</a>
+        </li>
+        <li class="nav-item px-lg-4">
+          <a class="nav-link text-uppercase text-expanded" href='../listar_vacunatorios/'>Lista de Vacunatorios</a>
+        </li>        
         {% endif %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../listar_Gripe/'>Historial de Gripe</a>

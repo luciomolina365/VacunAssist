@@ -6,6 +6,8 @@ from gestionVacunatorio.views import *
 
 app_name = 'main'
 urlpatterns = [
+    
+                       
     path('', home, name='homepage'),
     
     #path('cierre_de_sesion/', logout_then_login, name = 'Cierre_de_sesion')
@@ -35,6 +37,12 @@ urlpatterns = [
     path("registrar_vacunador/",VaccinatorRegistration.as_view(), name="Registrar_Vacunador"),
     path("registrar_admin/",AdminRegistration.as_view(), name="Registrar_Admin"),
     path("listar_vacunadores/",ListVaccinator.as_view(), name = "Listar_Vacunadores"),
+    path("listar_usuarios/",ListUsers.as_view(), name = "Listar_Usuarios"),
+    path("listar_vacunatorios/",ListVaccination.as_view(), name = "Listar_Vacunatorios"),
+    path("modificar_vacunatorio/<id>",modificar_vacunatorio, name ="Modificar_Vacunatorio"),
+    
+    # path("cambiar_nombre_vacunatorio/",redirect_to_name, name ="Cambiar_Nombre_Vacunatorio"),
+    #path("cambiar_nombre_vacunatorio/",ChangeVacName.as_view(), name = "Cambiar_Nombre_Vacunatorio"),
     path("listar_turno_zona/",ListTurnZone.as_view(), name = "Listar_Turnos_Zona"),
     path('accounts/admin_login/', staffLogin.as_view(), name='Inicio_de_sesion_staff'),
     path("listar_Covid/",ListCovid.as_view(), name = "Listar_Covid"),

@@ -181,6 +181,18 @@ class Information(models.Model):
     tel=models.IntegerField(default = None)
     description=models.CharField(default = None,max_length=200)
 
+    def set_new_name(self, name):
+        self.name = name
+    
+    def set_new_email(self, email):
+        self.email = email
+
+    def set_new_tel(self, tel):
+        self.tel = tel
+
+    def set_new_description(self, description):
+        self.description = description
+
 
 
 

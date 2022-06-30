@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -6,6 +7,7 @@ from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
+from django.template import Context, Template
 from .models import UserManager
 from django.contrib.auth import login, logout, authenticate
 from .forms import *
@@ -14,7 +16,7 @@ from .mail.send_email import *
 from django.contrib import messages
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
+from django.urls import reverse
 
 def saludo(request):
     return render(request, 'prueba.html')
@@ -259,7 +261,7 @@ class ListUserHistory(View):
             turnos=Turn.objects.order_by("date").filter(user_id=request.user.id)
             turns=[] 
             for t in turnos:
-                if (t.date < date.today()):
+                if (t.date < date.today() and t.status== True):
                     aux=t
                     aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                     aux.user_id=request.user.name
@@ -319,7 +321,21 @@ class ListVaccinator(View):
         messages.success(request," Eliminacion exitosa. ")
         vaccinators = Vaccinator.objects.all()
         return render(request, self.template_name, {'vacunadores': vaccinators})
-       
+
+        
+class ListUsers(View):
+    template_name = "listUsers.html"
+
+    def get(self, request, *args, **kwargs):
+        users = User.objects.all()
+        return render(request, self.template_name, {'usuarios': users})
+
+    def post(self, request, *args, **kwargs):
+        user = User.objects.get(id=request.POST["usuario_id"])
+        user.delete()
+        messages.success(request," Eliminacion exitosa. ")
+        users = User.objects.all()
+        return render(request, self.template_name, {'usuarios': users})
 
 class ListTurnZone(View):
     template_name = "listTurnZone.html"
@@ -332,7 +348,7 @@ class ListTurnZone(View):
             try:
                 aux=Turn.objects.order_by("date").filter(user_id = u.id)
                 for t in aux:
-                    if (t.date >=date.today):
+                    if ((t.date >= date.today()) and (t.status == False)):
                         turn=t
                         turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -344,6 +360,31 @@ class ListTurnZone(View):
 
         return render(request, self.template_name, {'turnos': data})
 
+
+    def post(self, request, *args, **kwargs):
+        turn = Turn.objects.get(id=request.POST["turno_id"])
+        turn.status=True
+        turn.save()
+        messages.success(request,"Ha marcado como presente el turno seleccionado")
+        zoneFilter=request.session['user']['zone']
+        data=[]
+        users=User.objects.filter(zone=zoneFilter)
+        for u in users:
+            try:
+                aux=Turn.objects.order_by("date").filter(user_id = u.id)
+                for t in aux:
+                    if ((t.date >= date.today()) and (t.status == False)):
+                        turn=t
+                        turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay turnos en la zona")
+        return render(request, self.template_name, {'turnos': data})
+
+
 class ListCovid(View):
     template_name = "listVaccines/listCovid.html"
 
@@ -354,7 +395,7 @@ class ListCovid(View):
 
         for t in turns:
             try:
-                    if (t.date < date.today()):
+                    if (t.date < date.today() or t.status==True):
                         turn=t
                         turn.vaccine_id="COVID"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -377,7 +418,7 @@ class ListGripe(View):
 
         for t in turns:
             try:
-                    if (t.date < date.today()):
+                    if (t.date < date.today() or t.status==True):
                         turn=t
                         turn.vaccine_id="GRIPE"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -389,6 +430,36 @@ class ListGripe(View):
             messages.success(request, "No hay historial de turnos de tipo Gripe")
 
         return render(request, self.template_name, {'turnos': data})
+
+
+class ListVaccination(View):
+    template_name = "listVaccination.html"
+    dato=0
+
+    def get(self, request, *args, **kwargs):
+
+        data=Information.objects.all()
+        return render(request, self.template_name, {'vacunatorios': data})
+
+
+def modificar_vacunatorio(request, id):  
+
+    vaccination=Information.objects.get(id=id)
+
+    data={
+        'form':informationRegForm(instance=vaccination)
+    }
+
+    if request.method == 'POST':
+        formulary=informationRegForm(data=request.POST,instance=vaccination)
+        if formulary.is_valid():
+            formulary.save()
+            messages.success(request, "Se modifico el vacunatorio exitosamente")
+            return redirect(to='main:Listar_Vacunatorios')
+
+
+    return render(request,"modification/changeVaccination.html",data)
+
 
 
 ###COMO SE LLAMA A AMARILLA?  Y SE ROMPE CUANDO NO EXISTE LA VACUNA
@@ -424,6 +495,7 @@ class Info(View):
         data=Information.objects.all()
 
         return render(request, self.template_name, {'informacion': data})
+
 
 
 class FormularioDeIngreso(View):
