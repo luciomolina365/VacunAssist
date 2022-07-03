@@ -117,8 +117,9 @@
               <td>{{ usuario.zone }}</td>
               <td>
               <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-              <input type="hidden" id="usuario_id" name="usuario_id" value="{{usuario.id}}">
-              <button class="btn btn-success mt-2 ml-2">Asignar fecha</a>
+                <input type="hidden" id="usuario_id" name="usuario_id" value="{{usuario.id}}">
+                <button id="asignar_id" name = "arg_btn_asignar" value = True class="btn btn-success mt-2 ml-2">Asignar fecha</a>
+                <button id="denegar_id" name = "arg_btn_denegar" value = True class="btn btn-danger mt-2 ml-2">Denegar</a>
               </form>
               </td>
             </tr>

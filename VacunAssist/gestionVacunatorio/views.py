@@ -571,15 +571,25 @@ class ListTurnRequests(View):
 
     def post(self, request, *args, **kwargs):
         request.session['arg_user_id'] = request.POST["usuario_id"]
+        #print(request.POST)
+        try:
+            if request.POST.get('arg_btn_denegar') == "True":
+                pass
+                #ELIMINAR TURNO
 
+                Turn.objects.filter(user_id = request.POST["usuario_id"], date = None).delete()
+            
+                messages.success(request, "Operación exitosa.")
+                return redirect(reverse_lazy('main:Listar_solicitudes'))
+            if request.POST.get('arg_btn_asignar') == "True":
+                return redirect(reverse_lazy('main:Aceptar_solicitud'))
+        except KeyError:
+            pass
         #print('/'*20)
         #request.session['date'] = datetime.today().date().__str__()
         #print(request.session['date'])
         #print('/'*20)
-
-        render(request, 'homeAdmin.html')
         return redirect(reverse_lazy('main:Aceptar_solicitud'))
-        #return render(request, self.template_name, {'usuarios': users})
 
 class SetTurnRequestDate(View):
     template_name = "setTurnRequestDate.html"
