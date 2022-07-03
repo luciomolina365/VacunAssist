@@ -26,7 +26,7 @@ urlpatterns = [
     path("turnos_pendientes/",ListUserTurn.as_view(), name = "Listar_Turnos"),
     path("historial_turnos/",ListUserHistory.as_view(), name = "Listar_Historial"),
     path("info_vacunatorios/",Info.as_view(), name = "Informacion"),
-    path("solicitar_turno_fiebre_amarilla/",requestAmarillaTurn, name = "Informacion"),
+    path("solicitar_turno_fiebre_amarilla/",requestAmarillaTurn, name = "Solicitar_Amarilla"),
   
 
 
@@ -49,6 +49,10 @@ urlpatterns = [
     path("listar_Covid/",ListCovid.as_view(), name = "Listar_Covid"),
     path("listar_Gripe/",ListGripe.as_view(), name = "Listar_Gripe"),
     path("listar_Amarilla/",ListAmarilla.as_view(), name = "Listar_Amarilla"),
+
+    path("listar_solicitudes/",ListTurnRequests.as_view(), name = "Listar_solicitudes"),
+    path("aceptar_solicitud/",SetTurnRequestDate.as_view(), name = "Aceptar_solicitud"),
+
 
     
     
