@@ -443,6 +443,11 @@ class ListTurnZone(View):
 class ListCovid(View):
     template_name = "listVaccines/listCovid.html"
 
+    vacuna = Vaccine.objects.filter(name="COVID").first()
+    if vacuna == None:
+        vacuna = Vaccine.objects.create(name="COVID", timeSpan=21)
+        vacuna = Vaccine.objects.filter(name="COVID").first()
+
     def get(self, request, *args, **kwargs):
         id_covid=Vaccine.objects.get(name = "COVID")
         data=[]
@@ -489,9 +494,18 @@ class ListGripe(View):
 
 class ListVaccination(View):
     template_name = "listVaccination.html"
-    dato=0
+    
+
+
 
     def get(self, request, *args, **kwargs):
+
+        data=Information.objects.all()
+        if data.exists() == False:
+            data=Information.objects.create(name="Vacunatorio 1", email="Vacunatorio1@gmail.com",tel=12345,description="")
+            data=Information.objects.create(name="Vacunatorio 2", email="Vacunatorio2@gmail.com",tel=12345,description="")
+            data=Information.objects.create(name="Vacunatorio 3", email="Vacunatorio3@gmail.com",tel=12345,description="")
+
 
         data=Information.objects.all()
         return render(request, self.template_name, {'vacunatorios': data})
@@ -521,6 +535,7 @@ def modificar_vacunatorio(request, id):
 class ListAmarilla(View):
     template_name = "listVaccines/listAmarilla.html"
 
+
     def get(self, request, *args, **kwargs):
         id_covid=Vaccine.objects.get(name = "AMARILLA")
         data=[]
@@ -545,8 +560,17 @@ class ListAmarilla(View):
 class Info(View):
     template_name = "info.html"
 
+    
+
+
     def get(self, request, *args, **kwargs):
-       
+
+        data=Information.objects.all()
+        if data.exists() == False:
+            data=Information.objects.create(name="Vacunatorio 1", email="Vacunatorio1@gmail.com",tel=12345,description="")
+            data=Information.objects.create(name="Vacunatorio 2", email="Vacunatorio2@gmail.com",tel=12345,description="")
+            data=Information.objects.create(name="Vacunatorio 3", email="Vacunatorio3@gmail.com",tel=12345,description="")
+
         data=Information.objects.all()
 
         return render(request, self.template_name, {'informacion': data})
