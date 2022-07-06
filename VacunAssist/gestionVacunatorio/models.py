@@ -2,7 +2,7 @@ import email
 from random import randint
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -212,4 +212,4 @@ class Forum(models.Model):
     user=models.CharField(max_length=30,null=False)
     title=models.CharField(max_length=50)
     description=models.CharField(max_length=200)
-    date=models.DateField()
+    date=models.DateField(default=datetime.today())

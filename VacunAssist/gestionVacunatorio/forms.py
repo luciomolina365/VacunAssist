@@ -630,7 +630,31 @@ class ChangeVacEmailForm(forms.ModelForm):
         )
     )  
 
+class ForumRegForm(forms.ModelForm):
 
+    class Meta:
+        model = Forum
+        fields = ['title','description','user']
+        widgets = {
+            'title': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Titulo',
+                }
+            ),
+            'description': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'Descripcion',
+                }
+            ),
+            'user': forms.TextInput(
+                attrs = {
+                    'class': 'form-control',
+                    'placeholder': 'usuario',
+                }
+            ),
+        }
 
 """
  

@@ -22,10 +22,14 @@ def saludo(request):
     return render(request, 'prueba.html')
 
 def home(request):
+    
     return render(request,'indexHome.html')
 
 def homeAdmin(request):
     return render(request,'homeAdmin.html')
+
+def historyManager(request):
+    return render(request,'listHistory.html')
 
 def homeWithSession(request):
     #print(request.user.id)
@@ -376,20 +380,66 @@ class ListVaccinator(View):
         vaccinators = Vaccinator.objects.all()
         return render(request, self.template_name, {'vacunadores': vaccinators})
 
-        
-class ListUsers(View):
-    template_name = "listUsers.html"
+
+class ListForum(View):
+    template_name = "listForum.html"
 
     def get(self, request, *args, **kwargs):
-        users = User.objects.all()
-        return render(request, self.template_name, {'usuarios': users})
+        forums = Forum.objects.all()
+        if (len(forums) == 0):
+            messages.success(request," No hay post creados en la pagina. ")
+
+        return render(request, self.template_name, {'foros': forums})
 
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(id=request.POST["usuario_id"])
-        user.delete()
+        forum = Forum.objects.get(id=request.POST["foro_id"])
+        forum.delete()
         messages.success(request," Eliminacion exitosa. ")
-        users = User.objects.all()
-        return render(request, self.template_name, {'usuarios': users})
+        forums = Forum.objects.all()
+        return render(request, self.template_name, {'foros': forums})
+
+
+
+def modificar_foro(request, id):  
+
+    forum=Forum.objects.get(id=id)
+
+    data={
+        'form':ForumRegForm(instance=forum)
+    }
+
+    if request.method == 'POST':
+        formulary=ForumRegForm(data=request.POST,instance=forum)
+        if formulary.is_valid():
+            formulary.save()
+            messages.success(request, "Se modifico el post exitosamente")
+            return redirect(to='main:Foro_Admin')
+
+    return render(request,"modification/changeForum.html",data)
+
+
+def agregar_post(request):  
+
+    data={
+        'form':ForumRegForm()
+    }
+
+    if request.method == 'POST':
+        formulary=ForumRegForm(data=request.POST)
+        if formulary.is_valid():
+            formulary.save()
+            messages.success(request, "Se creo el post exitosamente")
+            return redirect(to='main:Foro_Admin')
+
+    return render(request,"modification/createForum.html",data)
+
+
+        #user = User.objects.get(id=request.POST["usuario_id"])
+        #user.delete()
+        #messages.success(request," Eliminacion exitosa. ")
+        #users = User.objects.all()
+        #return render(request, self.template_name, {'usuarios': users})
+
 
 class ListTurnZone(View):
     template_name = "listTurnZone.html"
@@ -562,11 +612,8 @@ class ListAmarilla(View):
 class Info(View):
     template_name = "info.html"
 
-    
-
 
     def get(self, request, *args, **kwargs):
-<<<<<<< HEAD
 
         data=Information.objects.all()
         if data.exists() == False:
@@ -574,10 +621,6 @@ class Info(View):
             data=Information.objects.create(name="Vacunatorio 2", email="Vacunatorio2@gmail.com",tel=12345,description="")
             data=Information.objects.create(name="Vacunatorio 3", email="Vacunatorio3@gmail.com",tel=12345,description="")
 
-=======
-        
-        
->>>>>>> 530f9fd125bc02afb9e05a368d41ab20151ee500
         data=Information.objects.all()
     
         return render(request, self.template_name, {'informacion': data})

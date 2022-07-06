@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Lista de usuarios del Sistema</title>
+        <title> Administracion de foro </title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -82,7 +82,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Usuarios</h1>
+        <h1 class="h3 mb-3 fw-normal"> Administracion de foro </h1>
         {% if messages %}
   
           {% for message in messages %}
@@ -94,31 +94,33 @@
           {% endfor %}
     
       {% endif %}
+
+        <a class="btn btn-success mt-2 ml-2" href="../crear_post/" name="name">Agregar Post</a>
+        <br>
+        <br>
+
         <table class="table">
           <thead>
             <tr>
-              <th scope="col"> # </th>
-              <th scope="col"> Nombre </th>
-              <th scope="col"> Apellido </th>
-              <th scope="col"> DNI </th>
-              <th scope="col"> Email </th>
-              <th scope="col"> Zona </th>
+              <th scope="col"> Titulo </th>
+              <th scope="col"> Descripcion </th>
+              <th scope="col"> Fecha </th>
+              <th scope="col"> Creador del post </th>
               <th scope="col"> Acciones </th>
             </tr>
           </thead>
           <tbody>
-            {% for usuario in usuarios %}
+            {% for foro in foros %}
             <tr>
-              <th scope="row">{{ usuario.id }}</th>
-              <td>{{ usuario.name }}</td>
-              <td>{{ usuario.surname }}</td>
-              <td>{{ usuario.dni }}</td>
-              <td>{{ usuario.email }}</td>
-              <td>{{ usuario.zone }}</td>
+              <td>{{ foro.title }}</td>
+              <td>{{ foro.description }}</td>
+              <td>{{ foro.date }}</td>
+              <td>{{ foro.user }}</td>
               <td>
+              <a class="btn btn-info mt-2 ml-2" href="../modificar_post/{{foro.id}}" name="name" value="{{foro.id}}">Modificar</a>
               <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-              <input type="hidden" id="usuario_id" name="usuario_id" value="{{usuario.id}}">
-              <button onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="btn btn-danger mt-2 ml-2">Eliminar</a>
+              <input type="hidden" id="foro_id" name="foro_id" value="{{foro.id}}">
+              <button onclick="return confirm('¿Estás seguro de que deseas eliminar este post?');" class="btn btn-danger mt-2 ml-2">Eliminar</button>
               </form>
               </td>
             </tr>
@@ -131,8 +133,5 @@
       <br>
       <a class="btn btn-primary" href="../HomeAdmin/">Volver al inicio</a>
     </main>
-    
-    
-        
       </body>
     </html>
