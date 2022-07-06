@@ -200,7 +200,7 @@ class Turn(models.Model):
     user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
     vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
     status = models.BooleanField()
-    date = models.DateField()
+    date = models.DateField(null = True)
     accepted = models.BooleanField(default=True)
 
 class TurnRequest(models.Model):

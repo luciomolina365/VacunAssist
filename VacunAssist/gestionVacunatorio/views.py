@@ -64,25 +64,22 @@ def requestAmarillaTurn(request):
                 return render(request,'homeWithSession.html')
 
             #SI ///NO/// TIENE LA VACUNA |||Y||| YA TIENE UNA SOLICITUD PENDIENTE
-            aux_turn = Turn.objects.filter(vaccine = "AMARILLA").first()
-            if formulario1.amarilla == False and aux_turn != None:
+            aux_turn = Turn.objects.filter(user = user) 
+            aux_turn = aux_turn.filter(date = None).first()
+            #print(aux_turn)
+            if formulario1.amarilla_ok == False and aux_turn != None:
                 messages.error(request, "Usted ya tiene una solicitud pendiente.")
                 return render(request,'homeWithSession.html')
 
             #SI ///NO/// TIENE LA VACUNA
-            if formulario1.amarilla == False:
-                date = datetime.today.__add__(timedelta(days=365)) # DENTRO DE UN AÑO
-                Turn.objects.create(user = user, vaccine = vacuna, status = False, date = date, accepted = False)
-                #TurnRequest.objects.create(user = user, vaccine = vacuna, accepted = False)
+            if formulario1.amarilla_ok == False:
+                date = datetime.today().__add__(timedelta(days=365)) # DENTRO DE UN AÑO
+                Turn.objects.create(user = user, vaccine = vacuna, status = False, date = None, accepted = False)
                 messages.success(request, "Solicitud exitosa.")
                 return render(request,'homeWithSession.html')
         else:
             messages.error(request, "Usted no completó el formulario de ingreso.")
             return render(request,'homeWithSession.html') 
-
-
-
-
 
     user = User.objects.filter(id = request.user.id)
     user = user.first()
@@ -115,6 +112,7 @@ class UserRegistration(CreateView):
 
     def form_valid(self, form):
         messages.success(self.request,"Registro exitoso")
+        print(form)
         return super(UserRegistration, self).form_valid(form)
     
 class VaccinatorRegistration(CreateView):
@@ -316,14 +314,15 @@ class ListUserHistory(View):
             turnos=Turn.objects.order_by("date").filter(user_id=request.user.id)
             turns=[] 
             for t in turnos:
-                if (t.date < date.today() and t.status== True):
-                    aux=t
-                    aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
-                    aux.user_id=request.user.name
-                    aux.zone=request.user.zone
-                    turns.append(aux)
-                else:
-                    pass
+                if t.date != None:
+                    if (t.date < date.today() and t.status== True):
+                        aux=t
+                        aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                        aux.user_id=request.user.name
+                        aux.zone=request.user.zone
+                        turns.append(aux)
+                    else:
+                        pass
         except Turn.DoesNotExist:
             pass
         if len(turns) == 0:
@@ -403,11 +402,12 @@ class ListTurnZone(View):
             try:
                 aux=Turn.objects.order_by("date").filter(user_id = u.id)
                 for t in aux:
-                    if ((t.date >= date.today()) and (t.status == False)):
-                        turn=t
-                        turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
-                        turn.user_id=User.objects.get(id = t.user_id)
-                        data.append(turn)
+                    if t.date != None:
+                        if ((t.date >= date.today()) and (t.status == False)):
+                            turn=t
+                            turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                            turn.user_id=User.objects.get(id = t.user_id)
+                            data.append(turn)
             except Turn.DoesNotExist:
                 pass
         if len(data) == 0:
@@ -428,11 +428,12 @@ class ListTurnZone(View):
             try:
                 aux=Turn.objects.order_by("date").filter(user_id = u.id)
                 for t in aux:
-                    if ((t.date >= date.today()) and (t.status == False)):
-                        turn=t
-                        turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
-                        turn.user_id=User.objects.get(id = t.user_id)
-                        data.append(turn)
+                    if t.date != None:
+                        if ((t.date >= date.today()) and (t.status == False)):
+                            turn=t
+                            turn.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
+                            turn.user_id=User.objects.get(id = t.user_id)
+                            data.append(turn)
             except Turn.DoesNotExist:
                 pass
         if len(data) == 0:
@@ -527,6 +528,7 @@ def modificar_vacunatorio(request, id):
             return redirect(to='main:Listar_Vacunatorios')
 
 
+
     return render(request,"modification/changeVaccination.html",data)
 
 
@@ -564,6 +566,7 @@ class Info(View):
 
 
     def get(self, request, *args, **kwargs):
+<<<<<<< HEAD
 
         data=Information.objects.all()
         if data.exists() == False:
@@ -571,10 +574,75 @@ class Info(View):
             data=Information.objects.create(name="Vacunatorio 2", email="Vacunatorio2@gmail.com",tel=12345,description="")
             data=Information.objects.create(name="Vacunatorio 3", email="Vacunatorio3@gmail.com",tel=12345,description="")
 
+=======
+        
+        
+>>>>>>> 530f9fd125bc02afb9e05a368d41ab20151ee500
         data=Information.objects.all()
-
+    
         return render(request, self.template_name, {'informacion': data})
 
+class ListTurnRequests(View):
+    template_name = "listTurnRequestAM.html"
+    
+
+    def get(self, request, *args, **kwargs):
+        users = User.objects.select_related()
+        turnR = Turn.objects.filter(date = None, accepted = False)
+        aux = []
+        for t in turnR:
+            aux.append(User.objects.filter(id = t.user_id).first())
+        #print(aux)
+        if len(aux) == 0:
+            messages.error(request, "No hay solicitudes pendientes.")
+        return render(request, self.template_name, {'usuarios': aux})
+
+    def post(self, request, *args, **kwargs):
+        request.session['arg_user_id'] = request.POST["usuario_id"]
+        #print(request.POST)
+        try:
+            if request.POST.get('arg_btn_denegar') == "True":
+                pass
+                #ELIMINAR TURNO
+
+                Turn.objects.filter(user_id = request.POST["usuario_id"], date = None).delete()
+            
+                messages.success(request, "Operación exitosa.")
+                return redirect(reverse_lazy('main:Listar_solicitudes'))
+            if request.POST.get('arg_btn_asignar') == "True":
+                return redirect(reverse_lazy('main:Aceptar_solicitud'))
+        except KeyError:
+            pass
+        #print('/'*20)
+        #request.session['date'] = datetime.today().date().__str__()
+        #print(request.session['date'])
+        #print('/'*20)
+        return redirect(reverse_lazy('main:Aceptar_solicitud'))
+
+class SetTurnRequestDate(View):
+    template_name = "setTurnRequestDate.html"
+    #form_class =
+    success_url = reverse_lazy('main:Listar_solicitudes')
+
+    def get(self,request, *args, **kwargs):
+        print(request.session.get('arg_user_id'))
+        today_d = datetime.today().date().__str__()
+        return render(request, self.template_name, {'date_d':today_d})
+
+    def post(self, request, *args, **kwargs):
+        #print('/'*20) 
+        #print(request.session.get('arg_user_id'))
+        #print('/'*20)
+        #print(request.POST['dateOfBirth'])
+
+        turn = Turn.objects.filter(user_id = request.session.get('arg_user_id'), date = None).first()
+
+        turn.date = datetime.fromisoformat(request.POST['dateOfBirth'])
+        turn.accepted = True
+        turn.save()
+        print(turn.id)
+
+        return redirect(self.success_url)
 
 
 class FormularioDeIngreso(View):

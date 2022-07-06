@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Lista de usuarios del Sistema</title>
+        <title>Solicitudes - Fiebre Amarilla</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -82,7 +82,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Usuarios</h1>
+        <h1 class="h3 mb-3 fw-normal">Solicitudes de turno para fiebre amarilla</h1>
         {% if messages %}
   
           {% for message in messages %}
@@ -97,7 +97,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th scope="col"> # </th>
+              
               <th scope="col"> Nombre </th>
               <th scope="col"> Apellido </th>
               <th scope="col"> DNI </th>
@@ -109,7 +109,7 @@
           <tbody>
             {% for usuario in usuarios %}
             <tr>
-              <th scope="row">{{ usuario.id }}</th>
+  
               <td>{{ usuario.name }}</td>
               <td>{{ usuario.surname }}</td>
               <td>{{ usuario.dni }}</td>
@@ -117,8 +117,9 @@
               <td>{{ usuario.zone }}</td>
               <td>
               <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-              <input type="hidden" id="usuario_id" name="usuario_id" value="{{usuario.id}}">
-              <button onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="btn btn-danger mt-2 ml-2">Eliminar</a>
+                <input type="hidden" id="usuario_id" name="usuario_id" value="{{usuario.id}}">
+                <button id="asignar_id" name = "arg_btn_asignar" value = True class="btn btn-success mt-2 ml-2">Asignar fecha</a>
+                <button id="denegar_id" name = "arg_btn_denegar" value = True class="btn btn-danger mt-2 ml-2">Denegar</a>
               </form>
               </td>
             </tr>
