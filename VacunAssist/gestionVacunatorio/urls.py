@@ -27,6 +27,7 @@ urlpatterns = [
     path("historial_turnos/",ListUserHistory.as_view(), name = "Listar_Historial"),
     path("info_vacunatorios/",Info.as_view(), name = "Informacion"),
     path("solicitar_turno_fiebre_amarilla/",requestAmarillaTurn, name = "Solicitar_Amarilla"),
+    path("foro/",allForum.as_view(), name = "Foro"),
   
 
 

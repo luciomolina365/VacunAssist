@@ -18,8 +18,6 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.urls import reverse
 
-def saludo(request):
-    return render(request, 'prueba.html')
 
 def home(request):
     return render(request,'indexHome.html')
@@ -506,7 +504,7 @@ class ListCovid(View):
 
         for t in turns:
             try:
-                    if (t.date < date.today() or t.status==True):
+                    if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="COVID"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -529,7 +527,7 @@ class ListGripe(View):
 
         for t in turns:
             try:
-                    if (t.date < date.today() or t.status==True):
+                    if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="GRIPE"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -562,6 +560,32 @@ class ListVaccination(View):
         return render(request, self.template_name, {'vacunatorios': data})
 
 
+class ListAmarilla(View):
+    template_name = "listVaccines/listAmarilla.html"
+
+
+    def get(self, request, *args, **kwargs):
+        id_covid=Vaccine.objects.get(name = "AMARILLA")
+        data=[]
+        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
+
+        for t in turns:
+            try:
+                    if (t.date < date.today() and t.status==True):
+                        turn=t
+                        turn.vaccine_id="AMARILLA"
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay historial de turnos de tipo Fiebre amarilla")
+
+        return render(request, self.template_name, {'turnos': data})
+
+
+
 def modificar_vacunatorio(request, id):  
 
     vaccination=Information.objects.get(id=id)
@@ -580,34 +604,6 @@ def modificar_vacunatorio(request, id):
 
 
     return render(request,"modification/changeVaccination.html",data)
-
-
-
-###COMO SE LLAMA A AMARILLA?  Y SE ROMPE CUANDO NO EXISTE LA VACUNA
-class ListAmarilla(View):
-    template_name = "listVaccines/listAmarilla.html"
-
-
-    def get(self, request, *args, **kwargs):
-        id_covid=Vaccine.objects.get(name = "AMARILLA")
-        data=[]
-        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
-
-        for t in turns:
-            try:
-                    if (t.date < date.today()):
-                        turn=t
-                        turn.vaccine_id="AMARILLA"
-
-                        turn.user_id=User.objects.get(id = t.user_id)
-                        turn.zone=turn.user_id.zone
-                        data.append(turn)
-            except Turn.DoesNotExist:
-                pass
-        if len(data) == 0:
-            messages.success(request, "No hay historial de turnos de tipo Fiebre amarilla")
-
-        return render(request, self.template_name, {'turnos': data})
 
 class ListTurnDay(View):
     template_name = "listTurnDay.html"
@@ -676,6 +672,20 @@ class Info(View):
         data=Information.objects.all()
     
         return render(request, self.template_name, {'informacion': data})
+
+
+class allForum(View):
+    template_name = "forum.html"
+
+
+    def get(self, request, *args, **kwargs):
+
+        data=Forum.objects.all()
+
+        if len(data) == 0:
+            messages.success(request, "No hay Avisos")
+    
+        return render(request, self.template_name, {'posts': data})
 
 class ListTurnRequests(View):
     template_name = "listTurnRequestAM.html"

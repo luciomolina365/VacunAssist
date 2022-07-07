@@ -44,6 +44,8 @@
 
     Hola {{request.session.user.name}}
     <br>
+    Zona: {{request.session.user.zone}}
+    
     </div>
   </div>
 
@@ -78,13 +80,13 @@
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../listarTurnosDia/'>Listar turnos en el dia</a>
         </li>       
-        {% endif %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../listar_solicitudes/'>Solicitudes de fiebre amarilla</a>
         </li>
         <li class="nav-item active px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../listar_historiales">Historiales de vacunas</a>
         </li> 
+        {% endif %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../foroAdmin/'>Foro</a>
         </li>
