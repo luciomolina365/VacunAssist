@@ -22,7 +22,6 @@ def saludo(request):
     return render(request, 'prueba.html')
 
 def home(request):
-    
     return render(request,'indexHome.html')
 
 def homeAdmin(request):
@@ -33,6 +32,7 @@ def historyManager(request):
 
 def homeWithSession(request):
     #print(request.user.id)
+    posts=Forum.objects.order_by('date').reverse()[:5]
     user = User.objects.filter(id = request.user.id)
     user = user.first()
     if user != None:
@@ -42,7 +42,7 @@ def homeWithSession(request):
         if formulary1 != None:
             #print(formulary1)
             #print('Tengo formulario')
-            return render(request,'homeWithSession.html')
+            return render(request,'homeWithSession.html',{'posts': posts})
         else:
             #print("NO tengo formulario") 
             return redirect(reverse_lazy('main:Formulario_de_ingreso'))

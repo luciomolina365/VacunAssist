@@ -1,6 +1,10 @@
 <html>
 
 <head>
+
+
+    
+  </style>
   
   <title>Home</title>
   {% load static %}
@@ -121,6 +125,29 @@
         </div>
       </div>
     </section>
+
+    <H2  style="background: #369659" > Ultimos posts </H2>
+    <table class="table" >
+      <thead style="background: #49b872">
+        <tr>
+          <th scope="col"> Titulo </th>
+          <th scope="col"> Usuario </th>
+          <th scope="col"> Fecha </th>
+          <th scope="col"> Descripcion </th>
+        </tr>
+      </thead>
+      <tbody  style="background: #69e998">
+        {% for post in posts %}
+        <tr>
+          <th scope="row">{{ post.title }}</th>
+          <td>{{ post.user }}</td>
+          <td>{{ post.date }}</td>
+          <td>{{ post.description }}</td>
+        </tr>
+        {% endfor %}
+        
+      </tbody>
+    </table>
 
 
     <!-- Footer -->
