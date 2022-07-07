@@ -609,6 +609,58 @@ class ListAmarilla(View):
 
         return render(request, self.template_name, {'turnos': data})
 
+class ListTurnDay(View):
+    template_name = "listTurnDay.html"
+
+
+    def get(self, request, *args, **kwargs):
+        
+        data=[]
+        turns=Turn.objects.all()
+
+        for t in turns:
+            try:
+                        turn=t
+                        turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay turnos para el dia seleccionado")
+
+        return render(request, self.template_name, {'turnos': data})
+
+    def post(self, request, *args, **kwargs):
+        if (request.POST['dia'] == ''):
+            turns=Turn.objects.all()
+        else:
+            turns = Turn.objects.filter(date=request.POST['dia'])
+
+        data=[]
+        for t in turns:
+            try:
+                        turn=t
+                        turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+
+        if len(data) == 0:
+            messages.success(request, "No hay turnos para el dia seleccionado")
+
+        return render(request, self.template_name, {'turnos': data})
+        #turns = Forum.objects.get(id=request.POST["foro_id"])
+
+        #messages.success(request," Eliminacion exitosa. ")
+        #orums = Forum.objects.all()
+        #return render(request, self.template_name, {'foros': forums})
+
+
+
 class Info(View):
     template_name = "info.html"
 

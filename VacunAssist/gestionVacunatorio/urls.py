@@ -40,6 +40,7 @@ urlpatterns = [
     path("registrar_admin/",AdminRegistration.as_view(), name="Registrar_Admin"),
     path("listar_vacunadores/",ListVaccinator.as_view(), name = "Listar_Vacunadores"),
     path("foroAdmin/",ListForum.as_view(), name = "Foro_Admin"),
+    path("listarTurnosDia/",ListTurnDay.as_view(), name = "Listar_Turnos_Dia"),
     path("modificar_post/<id>",modificar_foro, name ="Modificar_Post"),
     path("crear_post/",agregar_post, name ="Crear_Post"),
 

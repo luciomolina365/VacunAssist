@@ -603,6 +603,12 @@ class informationRegForm(forms.ModelForm):
 
         model = Information
         fields = ['name','email','tel','description']
+        labels = { 
+            'name':'Nombre',
+            'email':'Email',
+            'tel':'Telefono',
+            'description':'Descripcion',
+        }
         widgets = {
             'name': forms.TextInput(
                 attrs = {
@@ -635,6 +641,11 @@ class ForumRegForm(forms.ModelForm):
     class Meta:
         model = Forum
         fields = ['title','description','user']
+        labels = { 
+            'title':'Titulo',
+            'description':'Descripcion',
+            'user':'Usuario',
+        }
         widgets = {
             'title': forms.TextInput(
                 attrs = {
