@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.98.0">
-    <title>Asignar Fecha - Fiebre Amarilla </title>
+    <title>Asignacion de Turno</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
 
@@ -97,10 +97,29 @@
       {% endif %}
 
       <br>
+      <tr>
+        <th><label for="id_vaccine">Vacuna:</label></th>
+        <td>
+          <select class="form-control" name="vaccine" required id="id_vaccine">
+            <option value="">---------</option>
+    
+            <option value="GRIPE">Gripe</option>
+    
+            <option value="AMARILLA" selected>Fiebre Amarilla</option>
+    
+            <option value="COVID">Covid</option>
+    
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th><label for="id_date">Fecha:</label></th>
+        <input type="date" name="date" class="form-control"  min = "{{date_d}}" required id="id_date">
+      </tr>
       
-      <input type="date" name="dateOfBirth" class="form-control" placeholder="Fecha de nacimiento" min = "{{date_d}}" required id="id_dateOfBirth">
 
-      <br><button  class="w-100 btn btn-lg btn-success" type="submit" class="">Aceptar solicitud</button>
+
+      <br><button  class="w-100 btn btn-lg btn-success" type="submit" class="">Asignar</button>
       <br>
       <br>
       <br>
@@ -109,7 +128,7 @@
   </div>
   </form>
 
-  <a class="btn btn-primary" href='../listar_solicitudes/'>Volver</a>
+  <a class="btn btn-primary" href='../lista_asignar_turno/'>Volver</a>
 </main>
 
 

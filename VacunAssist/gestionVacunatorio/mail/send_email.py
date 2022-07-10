@@ -63,6 +63,19 @@ def send_passwordConfirm_email(email_receiver, name):
     '''
     send_mail(email_receiver, 'VacunAssist - Clave Modificada', texte, html)
 
+def send_turnCancelation_email(email_receiver, name):
+    html = f'''
+    <html>
+    <body>
+    <h3>Hola {name}, le informamos que su solicitud de turno para vacuna de fiebre amarilla fue denegada.</h3>
+    <br>
+    </body>
+    </html>'''
+    texte =f'''
+    Hola {name}, le informamos que su solicitud de turno para vacuna de fiebre amarilla fue denegada.
+    '''
+    send_mail(email_receiver, 'VacunAssist - Solucitud denegada', texte, html)
+
 def send_password_email(email_receiver, name, password):
   html = f'''
   <html>

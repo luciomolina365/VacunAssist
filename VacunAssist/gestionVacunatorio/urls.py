@@ -57,6 +57,13 @@ urlpatterns = [
     path("listar_solicitudes/",ListTurnRequests.as_view(), name = "Listar_solicitudes"),
     path("aceptar_solicitud/",SetTurnRequestDate.as_view(), name = "Aceptar_solicitud"),
 
+    path('formulario_de_ingreso_carga/', FormularioDeIngresoCarga.as_view(), name = 'Formulario_de_ingreso_carga'),
+    #path('formulario_de_ingreso_modificacion/<id>', FormularioDeIngresoModificacion, name = 'Formulario_de_ingreso_modificacion'),
+    path('formulario_de_ingreso_modificacion/', FormularioDeIngresoModificacion.as_view(), name = 'Formulario_de_ingreso_modificacion'),
+    path('formulario_de_usuario/', ListUsers_modForm.as_view(), name = 'Formulario_de_usuario'),
+
+    path("lista_asignar_turno/",ListUsers_asignarTurnoEnElDia.as_view(), name = "Lista_asignar_turno"),
+    path("asignar_turno/",SetTurn_asignarTurnoEnElDia.as_view(), name = "Asignar_turno"),
 
     
     
