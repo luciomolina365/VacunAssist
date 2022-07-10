@@ -44,6 +44,8 @@
 
     Hola {{request.session.user.name}}
     <br>
+    Zona: {{request.session.user.zone}}
+    
     </div>
   </div>
 
@@ -66,6 +68,12 @@
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../listar_turno_zona/">Listar turnos de la zona</a>
         </li>
+        <li class="nav-item px-lg-4">
+          <a class="nav-link text-uppercase text-expanded" href="../formulario_de_usuario/">Modificar formulario de usuario</a>
+        </li>
+        <li class="nav-item px-lg-4">
+          <a class="nav-link text-uppercase text-expanded" href="../lista_asignar_turno/">Asignar turno</a>
+        </li>
         {% endif %}
 
         {% if request.session.user.admin %}
@@ -74,14 +82,17 @@
         </li>
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../listar_vacunatorios/'>Lista de Vacunatorios</a>
-        </li>        
-        {% endif %}
+        </li> 
+        <li class="nav-item px-lg-4">
+          <a class="nav-link text-uppercase text-expanded" href='../listarTurnosDia/'>Listar turnos en el dia</a>
+        </li>       
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../listar_solicitudes/'>Solicitudes de fiebre amarilla</a>
         </li>
         <li class="nav-item active px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href="../listar_historiales">Historiales de vacunas</a>
         </li> 
+        {% endif %}
         <li class="nav-item px-lg-4">
           <a class="nav-link text-uppercase text-expanded" href='../foroAdmin/'>Foro</a>
         </li>

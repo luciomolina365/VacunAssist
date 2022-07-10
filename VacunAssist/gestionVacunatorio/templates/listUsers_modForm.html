@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Solicitudes - Fiebre Amarilla</title>
+        <title>Modificar Formulario - Lista</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
@@ -83,6 +83,9 @@
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
         <h1 class="h3 mb-3 fw-normal">Usuarios</h1>
+
+        <input type = 'number' id="dni_id" name="dni_id" >
+        <button id="search_id" name = "search_id">Buscar DNI</button>
         {% if messages %}
   
           {% for message in messages %}

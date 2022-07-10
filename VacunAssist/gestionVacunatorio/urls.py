@@ -27,6 +27,7 @@ urlpatterns = [
     path("historial_turnos/",ListUserHistory.as_view(), name = "Listar_Historial"),
     path("info_vacunatorios/",Info.as_view(), name = "Informacion"),
     path("solicitar_turno_fiebre_amarilla/",requestAmarillaTurn, name = "Solicitar_Amarilla"),
+    path("foro/",allForum.as_view(), name = "Foro"),
   
 
 
@@ -40,6 +41,7 @@ urlpatterns = [
     path("registrar_admin/",AdminRegistration.as_view(), name="Registrar_Admin"),
     path("listar_vacunadores/",ListVaccinator.as_view(), name = "Listar_Vacunadores"),
     path("foroAdmin/",ListForum.as_view(), name = "Foro_Admin"),
+    path("listarTurnosDia/",ListTurnDay.as_view(), name = "Listar_Turnos_Dia"),
     path("modificar_post/<id>",modificar_foro, name ="Modificar_Post"),
     path("crear_post/",agregar_post, name ="Crear_Post"),
 
@@ -59,7 +61,9 @@ urlpatterns = [
     #path('formulario_de_ingreso_modificacion/<id>', FormularioDeIngresoModificacion, name = 'Formulario_de_ingreso_modificacion'),
     path('formulario_de_ingreso_modificacion/', FormularioDeIngresoModificacion.as_view(), name = 'Formulario_de_ingreso_modificacion'),
     path('formulario_de_usuario/', ListUsers_modForm.as_view(), name = 'Formulario_de_usuario'),
-    
+
+    path("lista_asignar_turno/",ListUsers_asignarTurnoEnElDia.as_view(), name = "Lista_asignar_turno"),
+    path("asignar_turno/",SetTurn_asignarTurnoEnElDia.as_view(), name = "Asignar_turno"),
 
     
     

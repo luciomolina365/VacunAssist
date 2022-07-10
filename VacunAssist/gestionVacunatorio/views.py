@@ -18,8 +18,6 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from django.urls import reverse
 
-def saludo(request):
-    return render(request, 'prueba.html')
 
 def home(request):
     return render(request,'indexHome.html')
@@ -116,7 +114,7 @@ class UserRegistration(CreateView):
 
     def form_valid(self, form):
         messages.success(self.request,"Registro exitoso")
-        #print(form)
+        print(form)
         return super(UserRegistration, self).form_valid(form)
     
 class VaccinatorRegistration(CreateView):
@@ -527,7 +525,7 @@ class ListCovid(View):
 
         for t in turns:
             try:
-                    if (t.date < date.today() or t.status==True):
+                    if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="COVID"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -550,7 +548,7 @@ class ListGripe(View):
 
         for t in turns:
             try:
-                    if (t.date < date.today() or t.status==True):
+                    if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="GRIPE"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -583,6 +581,32 @@ class ListVaccination(View):
         return render(request, self.template_name, {'vacunatorios': data})
 
 
+class ListAmarilla(View):
+    template_name = "listVaccines/listAmarilla.html"
+
+
+    def get(self, request, *args, **kwargs):
+        id_covid=Vaccine.objects.get(name = "AMARILLA")
+        data=[]
+        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
+
+        for t in turns:
+            try:
+                    if (t.date < date.today() and t.status==True):
+                        turn=t
+                        turn.vaccine_id="AMARILLA"
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+        if len(data) == 0:
+            messages.success(request, "No hay historial de turnos de tipo Fiebre amarilla")
+
+        return render(request, self.template_name, {'turnos': data})
+
+
+
 def modificar_vacunatorio(request, id):  
 
     vaccination=Information.objects.get(id=id)
@@ -602,33 +626,57 @@ def modificar_vacunatorio(request, id):
 
     return render(request,"modification/changeVaccination.html",data)
 
-
-
-###COMO SE LLAMA A AMARILLA?  Y SE ROMPE CUANDO NO EXISTE LA VACUNA
-class ListAmarilla(View):
-    template_name = "listVaccines/listAmarilla.html"
+class ListTurnDay(View):
+    template_name = "listTurnDay.html"
 
 
     def get(self, request, *args, **kwargs):
-        id_covid=Vaccine.objects.get(name = "AMARILLA")
+        
         data=[]
-        turns=Turn.objects.order_by("date").filter(vaccine_id = id_covid)
+        turns=Turn.objects.all()
 
         for t in turns:
             try:
-                    if (t.date < date.today()):
                         turn=t
-                        turn.vaccine_id="AMARILLA"
-
+                        turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
                         turn.user_id=User.objects.get(id = t.user_id)
                         turn.zone=turn.user_id.zone
                         data.append(turn)
             except Turn.DoesNotExist:
                 pass
         if len(data) == 0:
-            messages.success(request, "No hay historial de turnos de tipo Fiebre amarilla")
+            messages.success(request, "No hay turnos para el dia seleccionado")
 
         return render(request, self.template_name, {'turnos': data})
+
+    def post(self, request, *args, **kwargs):
+        if (request.POST['dia'] == ''):
+            turns=Turn.objects.all()
+        else:
+            turns = Turn.objects.filter(date=request.POST['dia'])
+
+        data=[]
+        for t in turns:
+            try:
+                        turn=t
+                        turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
+                        turn.user_id=User.objects.get(id = t.user_id)
+                        turn.zone=turn.user_id.zone
+                        data.append(turn)
+            except Turn.DoesNotExist:
+                pass
+
+        if len(data) == 0:
+            messages.success(request, "No hay turnos para el dia seleccionado")
+
+        return render(request, self.template_name, {'turnos': data})
+        #turns = Forum.objects.get(id=request.POST["foro_id"])
+
+        #messages.success(request," Eliminacion exitosa. ")
+        #orums = Forum.objects.all()
+        #return render(request, self.template_name, {'foros': forums})
+
+
 
 class Info(View):
     template_name = "info.html"
@@ -645,6 +693,20 @@ class Info(View):
         data=Information.objects.all()
     
         return render(request, self.template_name, {'informacion': data})
+
+
+class allForum(View):
+    template_name = "forum.html"
+
+
+    def get(self, request, *args, **kwargs):
+
+        data=Forum.objects.all()
+
+        if len(data) == 0:
+            messages.success(request, "No hay Avisos")
+    
+        return render(request, self.template_name, {'posts': data})
 
 class ListTurnRequests(View):
     template_name = "listTurnRequestAM.html"
@@ -683,34 +745,6 @@ class ListTurnRequests(View):
         #print('/'*20)
         return redirect(reverse_lazy('main:Aceptar_solicitud'))
 
-class ListUsers_modForm(View):
-    template_name = "listUsers_modForm.html"
-    
-
-    def get(self, request, *args, **kwargs):
-        users = User.objects.all()
-        
-        if len(users) == 0:
-            messages.error(request, "No hay usuarios cargados.")
-        return render(request, self.template_name, {'usuarios': users})
-
-    def post(self, request, *args, **kwargs):
-        request.session['arg_user_id'] = request.POST["usuario_id"]
-        #print(request.POST)
-        try:
-            if request.POST.get('arg_btn_asignar') == "True":
-                return redirect(reverse_lazy('main:Formulario_de_ingreso_modificacion'))
-        except KeyError:
-            pass
-        #print('/'*20)
-        #request.session['date'] = datetime.today().date().__str__()
-        #print(request.session['date'])
-        #print('/'*20)
-        return redirect(reverse_lazy('main:Formulario_de_usuario'))
-
-
-
-
 
 class SetTurnRequestDate(View):
     template_name = "setTurnRequestDate.html"
@@ -736,6 +770,233 @@ class SetTurnRequestDate(View):
         #print(turn.id)
         messages.success(request, "Se ha asignado el turno correctamente.")
         return redirect(self.success_url)
+
+
+
+
+class ListUsers_asignarTurnoEnElDia(View):
+    template_name = "listUsers_asignarTurnoEnElDia.html"
+    
+
+    def get(self, request, *args, **kwargs):
+        users = User.objects.all().order_by('dni')
+        
+        if len(users) == 0:
+            messages.error(request, "No hay usuarios en el sistema.")
+        return render(request, self.template_name, {'usuarios': users})
+
+    def post(self, request, *args, **kwargs):
+        #print(request.POST.get('dni_id'))       
+        #print(request.POST)
+        try:
+            request.session['arg_user_id'] = request.POST["usuario_id"]
+            if request.POST.get('arg_btn_asignar') == "True":
+                
+                return redirect(reverse_lazy('main:Asignar_turno'))
+        except KeyError:
+            pass
+        if request.POST.get('dni_id') != "":
+            users = User.objects.all().filter(dni__contains = request.POST.get('dni_id')).order_by('dni')
+
+            #users = sorted(users,)
+            if len(users) == 0:
+                messages.error(request, "No hay usuarios con el dni ingresado.")
+            return render(request, self.template_name, {'usuarios':users})
+        #print('/'*20)
+        #request.session['date'] = datetime.today().date().__str__()
+        #print(request.session['date'])
+        #print('/'*20)
+        return redirect(reverse_lazy('main:Lista_asignar_turno'))
+
+class SetTurn_asignarTurnoEnElDia(View):
+    template_name = "asignarTurno.html"
+    #form_class =
+    success_url = reverse_lazy('main:Lista_asignar_turno')
+
+    def asignar_turno_gripe(self,usuario,fechaFinal):
+
+        formulario1 = Formulary.objects.filter(user = usuario).first()
+        if formulario1 == None:
+            return ValueError("ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO")
+            return "ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO"
+        if formulario1.gripe_date != None:
+            if formulario1.gripe_date.__add__(timedelta(days=365)).__gt__(date.today()):
+                print(f'///GRIPE/// - PLAZO ///NO/// CUMPLIDO - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
+                return 1
+
+                return ValueError("ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO")
+                return "ESTE USUARIO SE APLICO LA VACUNA DE LA GRIPE HACE MENOS DE UN ANIO"
+
+        vacuna = Vaccine.objects.filter(name="GRIPE").first()
+        if vacuna == None:
+            vacuna = Vaccine.objects.create(name="GRIPE", timeSpan=12.24)
+            vacuna = Vaccine.objects.filter(name="GRIPE").first()
+            
+        Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fechaFinal)
+
+        return "Turno GRIPE creado con exito"
+
+    def asignar_turno_amarilla(self,usuario,fecha):
+        formulario1 = Formulary.objects.filter(user = usuario).first()
+        if formulario1 == None:
+            return ValueError("ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO")
+            return "ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO"
+        if formulario1.amarilla_ok == True:
+            return 1
+        
+        vacuna = Vaccine.objects.filter(name="AMARILLA").first()
+        if vacuna == None:
+            vacuna = Vaccine.objects.create(name="AMARILLA", timeSpan=1)
+            vacuna = Vaccine.objects.filter(name="AMARILLA").first()
+            
+        Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+
+        return "Turno AMARILLA creado con exito"
+
+    def asignar_turno_covid(self,usuario,fecha):
+        form = Formulary.objects.filter(user_id = usuario.id).first()
+        if form != None:
+            cant_dosis_dadas = 0
+            if form.covid_1_date != None:
+                cant_dosis_dadas = cant_dosis_dadas + 1 
+            if form.covid_2_date != None:
+                cant_dosis_dadas = cant_dosis_dadas + 1
+            
+            if form.covid_2_date != None and form.covid_1_date != None:
+                if form.covid_1_date > form.covid_2_date:
+                    fecha_primera_dosis = form.covid_2_date
+                else:
+                    fecha_primera_dosis = form.covid_1_date
+
+            if form.covid_2_date == None and form.covid_1_date != None:
+               fecha_primera_dosis = form.covid_1_date
+
+            if form.covid_2_date != None and form.covid_1_date == None:
+               fecha_primera_dosis = form.covid_2_date  
+
+            admissionDate = form.admissionDate
+
+        if cant_dosis_dadas != None: #solicitar nro de dosis aplicadas al modelo
+            vacuna = Vaccine.objects.filter(name="COVID")
+            vacuna = vacuna.first()
+            if vacuna == None:
+                #print(vacuna)
+                vacuna = Vaccine.objects.create(name="COVID",timeSpan=21)
+                vacuna = Vaccine.objects.filter(name="COVID")
+                vacuna = vacuna.first()
+
+            if cant_dosis_dadas == 0:
+                turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                return f"GRUPO NORMAL - 0/2 dosis - {admissionDate} (HOY) ---> {fecha}"
+
+            if cant_dosis_dadas == 1:
+
+                if fecha_primera_dosis.__add__(timedelta(21)).__lt__(fecha): #si ya pasaron 21 dias
+                        turno = Turn.objects.create(user = usuario, vaccine = vacuna, status = False, date = fecha)
+                        return f"GRUPO NORMAL - PLAZO CUMPLIDO - 1/2 dosis - {fecha_primera_dosis} (HOY) ---> {fecha}"
+                    
+                else: #si NO pasaron 21 dias
+                    return 1
+
+            if cant_dosis_dadas == 2:
+                return 1
+
+        return 3
+
+
+    def get(self,request, *args, **kwargs):
+        #print(request.session.get('arg_user_id'))
+        today_d = datetime.today().date().__str__()
+        return render(request, self.template_name, {'date_d':today_d})
+
+    def post(self, request, *args, **kwargs):
+        #print('/'*20) 
+        #print(request.session.get('arg_user_id'))
+        #print('/'*20)
+        #print(request.POST['dateOfBirth'])
+        #user_id = request.session.get('arg_user_id')
+
+        #turn.date = datetime.fromisoformat(request.POST['dateOfBirth'])
+        vaccineAUX = request.POST.get('vaccine')
+        fecha = datetime.fromisoformat(request.POST.get('date'))
+        #print(vaccineAUX)
+        #print(fecha)
+        usuario = User.objects.get(id = request.session.get('arg_user_id'))
+        edad = relativedelta(datetime.now(), usuario.dateOfBirth)
+        if edad.years < 18:
+            messages.error(request, "Este usuario es menor de edad.")
+            today_d = datetime.today().date().__str__()
+            return render(request, self.template_name, {'date_d':today_d})
+        if vaccineAUX == "GRIPE":
+            result = self.asignar_turno_gripe(usuario,fecha)
+            if result == 1:
+                messages.error(request, "Este usuario NO cumple con los requisitos de asignacion de turno para GRIPE.")
+                today_d = datetime.today().date().__str__()
+                return render(request, self.template_name, {'date_d':today_d})
+            else:
+                messages.success(request, "Turno asignado con exito.")
+                return redirect(self.success_url)
+        
+        if vaccineAUX == "AMARILLA":
+            result = self.asignar_turno_amarilla(usuario,fecha)
+            if result == 1:
+                messages.error(request, "Este usuario NO cumple con los requisitos de asignacion de turno para FIEBRE AMARILLA.")
+                today_d = datetime.today().date().__str__()
+                return render(request, self.template_name, {'date_d':today_d})
+            else:
+                messages.success(request, "Turno asignado con exito.")
+                return redirect(self.success_url)
+
+        if vaccineAUX == "COVID":
+            result = self.asignar_turno_covid(usuario,fecha)
+            if result == 1:
+                messages.error(request, "Este usuario NO cumple con los requisitos de asignacion de turno para COVID.")
+                today_d = datetime.today().date().__str__()
+                return render(request, self.template_name, {'date_d':today_d})
+            else:
+                messages.success(request, "Turno asignado con exito.")
+                return redirect(self.success_url)
+
+
+
+        
+        raise Exception
+        messages.success(request, "Se ha asignado el turno correctamente.")
+        return redirect(self.success_url)
+
+
+class ListUsers_modForm(View):
+    template_name = "listUsers_modForm.html"
+    
+
+    def get(self, request, *args, **kwargs):
+        users = User.objects.all().order_by('dni')
+        
+        if len(users) == 0:
+            messages.error(request, "No hay usuarios en el sistema.")
+        return render(request, self.template_name, {'usuarios': users})
+
+    def post(self, request, *args, **kwargs):
+        #print(request.POST.get('dni_id'))       
+        #print(request.POST)
+        try:
+            request.session['arg_user_id'] = request.POST["usuario_id"]
+            if request.POST.get('arg_btn_asignar') == "True":
+                return redirect(reverse_lazy('main:Formulario_de_ingreso_modificacion'))
+        except KeyError:
+            pass
+        if request.POST.get('dni_id') != "":
+            users = User.objects.all().filter(dni__contains = request.POST.get('dni_id')).order_by('dni')
+
+            #users = sorted(users,)
+            if len(users) == 0:
+                messages.error(request, "No hay usuarios con el dni ingresado.")
+            return render(request, self.template_name, {'usuarios':users})
+        #print('/'*20)
+        #request.session['date'] = datetime.today().date().__str__()
+        #print(request.session['date'])
+        #print('/'*20)
+        return redirect(reverse_lazy('main:Formulario_de_usuario'))
 
 
 class FormularioDeIngreso(View):
@@ -990,156 +1251,26 @@ class FormularioDeIngreso(View):
             return render(request, self.template_name, {'form':form})
 
 
-def FormularioDeIngresoModificacionAUX(request,id):
-    #template_name = "formulary.html"
-    #form_class = FormularioDeIngresoForm
-    #success_url = reverse_lazy('main:homeA')
-
-    formulary1 = Formulary.objects.get(user_id = id)
-
-    user = User.objects.get(id = formulary1.user_id)
-
-    if user != None:
-        
-        data={
-            'form':FormularioDeIngresoForm(instance=formulary1)
-        }
-    if request.method == 'POST':
-        formulary=FormularioDeIngresoForm(data=request.POST,instance=formulary1)
-        if formulary.is_valid():
-            
-            raise Exception
-            formulary.save()
-            
-            messages.success(request, "Se modifico el post exitosamente")
-            return redirect(to='main:Foro_Admin')
-    
-    #print(formulary1.risk)
-    #print(data['form'].risk)
-    #print(data['risk'])
-    return render(request,"formulary.html", data)
-
-
-
-    def get(self, request, *args, **kwargs):
-        user = User.objects.filter(id = request.session['id_loaded_user'])
-        user = user.first()
-        if user != None:
-            #print("Usuario existe")
-            formulary1 = Formulary.objects.filter(user_id = request.session['id_loaded_user'])
-            formulary1 = formulary1.first()
-            if formulary1 != None:
-                print(formulary1.amarilla_ok)
-                form = FormularioDeIngresoForm()
-                form.de_riesgo = formulary1.risk # covid_1_date=formulary1.covid_1_date, covid_2_date=formulary1.covid_2_date, gripe_date=formulary1.gripe_date, amarilla_ok=formulary1.amarilla_ok
-                print(form.cleaned_data())
-                raise Exception
-                #print('Tengo formulario, precargo uno lleno')
-                return render(request, self.template_name, {'form': form})
-            else:
-                #print("NO tengo formulario") 
-                return render(request, self.template_name, {'form': self.form_class})
-
-        return render(request, self.template_name, {'form': self.form_class}) # POR LAS DUDAS
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        #print(form.data)
-        if form.is_valid():
-            #print('is_valid')
-            user = User.objects.filter(id = request.session['id_loaded_user'])
-            if user.exists():
-                user = user.first()
-                cant = 0
-
-                if form.data["covid_1_date"] != "":
-                    cant = cant + 1
-                    fecha_primera_dosis =  date.fromisoformat(form.data["covid_1_date"])
-                    C1D = date.fromisoformat(form.data["covid_1_date"])
-                else:
-                    C1D = None
-
-                if form.data["covid_2_date"] != "":
-                    cant = cant + 1
-                    C2D = date.fromisoformat(form.data["covid_2_date"])
-                else:
-                    C2D = None
-                
-                try:
-                    if form.data["de_riesgo"] == 'on':
-                        de_riesgo = True
-                except KeyError:
-                    de_riesgo = False
-
-                try:
-                    if form.data["amarilla_ok"] == 'on':
-                        amarilla = True
-                except KeyError:
-                    amarilla = False
-
-                if form.data["gripe_date"] != "":
-                    GD = date.fromisoformat(form.data["gripe_date"])
-                else:
-                    GD = None
-                
-                edad = self.sacarEdad(user)
-                fechaDeHoy = date.today()
-
-
-                aux1 = Formulary.objects.filter(user_id = request.session['id_loaded_user'])
-                if aux1 != None: #SI EXISTE UN FORMULARIO
-                    aux1.risk = de_riesgo
-                    aux1.admissionDate = fechaDeHoy
-                    aux1.covid_1_date = C1D
-                    aux1.covid_2_date = C2D
-                    aux1.gripe_date = GD
-                    aux1.amarilla_ok = amarilla
-                    aux1.save()
-                else:                
-                    Formulary.objects.create(
-                        user = user,
-                        risk = de_riesgo, 
-                        admissionDate = fechaDeHoy,
-                        covid_1_date = C1D,
-                        covid_2_date = C2D,
-                        gripe_date = GD,
-                        amarilla_ok = amarilla
-                    )
-            messages.success(request,"Formulario creado con exito.")
-            return redirect(self.success_url)
-            
-        else:
-            form = self.form_class(request.POST)
-            return render(request, self.template_name, {'form':form})
-
-
 class FormularioDeIngresoModificacion(View):
-    template_name = "formulary.html"
+    template_name = "formularyMod.html"
     form_class = FormularioDeIngresoForm
     success_url = reverse_lazy('main:homeA')
 
+    def sacarEdad(self,user):
+        fecha1 = user.dateOfBirth
+        #fecha2 = date.today()
+        #edad = fecha2.year - fecha1.year - 1
+        #if fecha2.month >= fecha1.month:
+        #    if fecha2.day >= fecha1.day:
+        #        edad = edad + 1
+        edad = relativedelta(datetime.now(), fecha1)
+        return edad.years 
+
     def get(self, request, *args, **kwargs):
-        user = User.objects.filter(id = request.session['id_loaded_user'])
+        user = User.objects.filter(id = request.session['arg_user_id'])
         user = user.first()
         if user != None:
-            #print("Usuario existe")
-            formulary1 = Formulary.objects.filter(user_id = request.session['id_loaded_user'])
-            formulary1 = formulary1.first()
-            if formulary1 != None:
-                print(formulary1.amarilla_ok)
-                form = FormularioDeIngresoForm(de_riesgo = formulary1.risk, 
-                covid_1_date=formulary1.covid_1_date,
-                covid_2_date=formulary1.covid_2_date, 
-                gripe_date=formulary1.gripe_date, 
-                amarilla_ok=formulary1.amarilla_ok)
-
-                #print(form.cleaned_data())
-                #raise Exception
-                #print('Tengo formulario, precargo uno lleno')
-                return render(request, self.template_name, {'form': form})
-            else:
-                #print("NO tengo formulario") 
-                return render(request, self.template_name, {'form': self.form_class})
+            return render(request, self.template_name, {'form': self.form_class})
 
         return render(request, self.template_name, {'form': self.form_class}) # POR LAS DUDAS
 
@@ -1148,7 +1279,7 @@ class FormularioDeIngresoModificacion(View):
         #print(form.data)
         if form.is_valid():
             #print('is_valid')
-            user = User.objects.filter(id = request.session['id_loaded_user'])
+            user = User.objects.filter(id = request.session['arg_user_id'])
             if user.exists():
                 user = user.first()
                 cant = 0
@@ -1187,7 +1318,7 @@ class FormularioDeIngresoModificacion(View):
                 fechaDeHoy = date.today()
 
 
-                aux1 = Formulary.objects.filter(user_id = request.session['id_loaded_user'])
+                aux1 = Formulary.objects.filter(user_id = request.session['arg_user_id']).first()
                 if aux1 != None: #SI EXISTE UN FORMULARIO
                     aux1.risk = de_riesgo
                     aux1.admissionDate = fechaDeHoy
@@ -1215,7 +1346,7 @@ class FormularioDeIngresoModificacion(View):
 
 
 class FormularioDeIngresoCarga(View):
-    template_name = "formulary.html"
+    template_name = "formularyLoad.html"
     form_class = FormularioDeIngresoForm
     success_url = reverse_lazy('main:homeA')
 

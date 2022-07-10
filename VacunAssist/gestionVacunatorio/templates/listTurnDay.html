@@ -10,14 +10,11 @@
         <meta name="description" content="">
         <meta name="author" content="Wolftech corporation">
         <meta name="generator" content="Hugo 0.98.0">
-        <title>Lista de Turnos en zona</title>
+        <title>Turnos del dia</title>
     
         <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sign-in/">
     
         
-    
-        
-    
     <link href="{% static 'gestionVacunatorio/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
     
         <style>
@@ -82,7 +79,7 @@
     <main class="m-auto">
         <form method="POST" style="color: black;"> {% csrf_token %}
         <img class="mb-4" src="{% static 'gestionVacunatorio/img/Logo_VacunAssist.jpg' %}" alt="" width="205" height="111">
-        <h1 class="h3 mb-3 fw-normal">Listado de turnos en la zona</h1>
+        <h1 class="h3 mb-3 fw-normal">Turnos del dia</h1>
         {% if messages %}
   
           {% for message in messages %}
@@ -94,10 +91,16 @@
           {% endfor %}
     
       {% endif %}
+        <form action="">
+            <label>
+                Dia:
+              <input type="date" name="dia">
+            </label>
+          
+            <p><button>Buscar</button></p>
+          </form>
+          
 
-      {% if turnos == None %}
-          No hay turnos en esta zona 
-        {% endif %}
 
         <table class="table">
           <thead>
@@ -106,8 +109,8 @@
               <th scope="col"> Usuario </th>
               <th scope="col"> Vacuna </th>
               <th scope="col"> Fecha </th>
+              <th scope="col"> Zona </th>
               <th scope="col"> Estado </th>
-              <th scope="col"> Acciones </th>
             </tr>
           </thead>
           <tbody>
@@ -117,21 +120,15 @@
               <td>{{ turno.user_id }}</td>
               <td>{{ turno.vaccine_id }}</td>
               <td>{{ turno.date }}</td>
+              <td>{{ turno.zone }}</td>
               {% if  turno.status == True %}
                 <td> Presente </td>
               {% else %}
                 <td> Ausente </td>
               {% endif %}
-              <td>
-                <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
-                  <input type="hidden" id="turno_id" name="turno_id" value="{{turno.id}}">
-                  <button onclick="return confirm('¿Estás seguro de que deseas marcar como presente el turno?');" class="btn btn-Info mt-2 ml-2">Marcar Asistencia</a>
-                  </form>
-
-
-              </td>
             </tr>
             {% endfor %}
+            
           </tbody>
         </table>
       

@@ -43,17 +43,17 @@
     
       {% endif %}
 
-    
-    {% if user.is_authenticated %}
-    Hola {{user.name}}
-    {%else%}
-    No estas autenticado
-    {%endif%}
     </div>
     <div style= "text-align:right; margin-right:100px;color:white;">
     
       {% if user.is_authenticated %}
+      Hola {{user.name}}
+      <br>
       {{user.email}}
+      <br>
+      Zona Actual: {{user.zone}}
+      {%else%}
+      No estas autenticado
       {%endif%}
       </div>
 
@@ -79,6 +79,9 @@
           </li>
           <li class="nav-item px-lg-4">
             <a class="nav-link text-uppercase text-expanded" href="../info_vacunatorios/">Informacion de vacunatorios</a>
+          </li>
+          <li class="nav-item px-lg-4">
+            <a class="nav-link text-uppercase text-expanded" href="../foro/">Foro</a>
           </li>
           <li class="nav-item px-lg-4">
             <a class="nav-link text-uppercase text-expanded" href="../cierre_de_sesion/">Cerrar Sesión</a>
