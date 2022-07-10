@@ -843,7 +843,7 @@ class SetTurn_asignarTurnoEnElDia(View):
             return ValueError("ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO")
             return "ESTE USUARIO NO COMPLETO EL FORMULARIO DE INGRESO"
         if formulario1.gripe_date != None:
-            if formulario1.gripe_date.__add__(timedelta(days=365)).__gt__(date.today()):
+            if formulario1.gripe_date.__add__(timedelta(days=365)).__gt__(fechaFinal):
                 print(f'///GRIPE/// - PLAZO ///NO/// CUMPLIDO - {formulario1.admissionDate} (HOY) ---> {fechaFinal}')
                 return 1
 
