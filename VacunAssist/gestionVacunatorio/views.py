@@ -114,7 +114,6 @@ class UserRegistration(CreateView):
 
     def form_valid(self, form):
         messages.success(self.request,"Registro exitoso")
-        print(form)
         return super(UserRegistration, self).form_valid(form)
     
 class VaccinatorRegistration(CreateView):
@@ -488,7 +487,27 @@ class ListTurnZone(View):
     def post(self, request, *args, **kwargs):
         turn = Turn.objects.get(id=request.POST["turno_id"])
         turn.status=True
+
+        formu=Formulary.objects.get(user=turn.user_id)
+
+        vaccine=Vaccine.objects.get(id=turn.vaccine_id)
+
+        if(vaccine.name == "AMARILLA"):
+            formu.amarilla_ok=True
+        else:
+            if(vaccine.name== "GRIPE"):
+                formu.gripe_date = turn.date
+            else:
+                if (formu.covid_1_date==None):
+                    formu.covid_1_date = turn.date
+                else:
+                    formu.covid_2_date = turn.date
+
         turn.save()
+        formu.save()
+
+
+
         messages.success(request,"Ha marcado como presente el turno seleccionado")
         zoneFilter=request.session['user']['zone']
         data=[]

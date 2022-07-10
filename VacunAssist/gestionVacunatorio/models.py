@@ -203,10 +203,6 @@ class Turn(models.Model):
     date = models.DateField(null = True)
     accepted = models.BooleanField(default=True)
 
-class TurnRequest(models.Model):
-    user = models.ForeignKey("gestionVacunatorio.User", on_delete=models.CASCADE)
-    vaccine = models.ForeignKey("gestionVacunatorio.Vaccine", on_delete=models.CASCADE)
-    accepted = models.BooleanField(default=False)
 
 class Forum(models.Model):
     user=models.CharField(max_length=30,null=False)
