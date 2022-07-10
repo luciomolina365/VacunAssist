@@ -295,7 +295,7 @@ class ChangeUserZone(View):
                 user = user.first()
                 user.set_new_zone(form.cleaned_data.get('zone'))
                 user.save()
-                messages.success(request,"La modificacion de su nueva zona a sido un exito ")
+                messages.success(request,"La modificacion de su nueva zona ha sido un exito. ")
                 return redirect(self.success_url)
             
             return render(request, self.template_name, {'form':form })
@@ -313,7 +313,7 @@ class ListUserTurn(View):
             turnos=Turn.objects.order_by("date").filter(user_id=request.user.id)
             turns=[] 
             for t in turnos:
-                if (t.date == None) or (t.date >= date.today()):
+                if (t.date == None) or (t.date >= date.today() and t.status == False):
                     aux=t
                     aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                     aux.user_id=request.user.name
