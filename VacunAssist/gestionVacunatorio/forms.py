@@ -568,8 +568,76 @@ class FormularioDeIngresoForm(forms.Form):
         )
     )
     
+    
+    #def __init__(self,de_riesgo, covid_1_date, covid_2_date, gripe_date, amarilla_ok):
+    #    super(FormularioDeIngresoForm,self).__init__()
+    #    self.de_riesgo = de_riesgo
+    #    self.covid_1_date = covid_1_date
+    #    self.covid_2_date = covid_2_date
+    #    self.gripe_date = gripe_date
+    #    self.amarilla_ok = amarilla_ok
 
+################
+class FormularioDeIngresoFormAAA(forms.ModelForm):
+    class Meta:
+        vaccines = [("COVID","COVID"),
+        ("GRIPE","GRIPE"),
+        ("AMARILLA","AMARILLA"),
+        ]
 
+        model = Formulary 
+        fields = ['risk','covid_1_date','covid_2_date','gripe_date','amarilla_ok']
+        widgets = {
+            'de_riesgo':forms.CheckboxInput(
+                attrs ={
+                    'class':'form-control',
+                    'placeholder': '¿Usted pertenece al grupo de riesgo?',
+                    'id':'de_riesgo',             
+                }
+            ),
+            'covid_1_date': forms.DateInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la fecha de su primera dosis covid',
+                'id':'covid_1_date',
+                'type':'date',
+                'max': date.today(),
+
+            }
+            ),
+            'covid_2_date': forms.DateInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la fecha de su segunda dosis covid',
+                'id':'covid_2_date',
+                'type':'date',
+                'max': date.today(),
+                'required':False
+            }
+            ),
+            'gripe_date':forms.DateInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': 'Ingrese la fecha de su última vacuna de la gripe.',
+                'id':'gripe_date',
+                'type':'date',
+                'max': date.today(),
+                'required':False
+                
+            }
+            ),
+            'amarilla_ok':forms.CheckboxInput(
+            attrs ={
+                'class':'form-control',
+                'placeholder': '¿Usted tiene la vacuna para la fiebre amarilla?',
+                'id':'amarilla_ok',                
+                'required':False
+
+            }
+            )
+
+        }
+#################
 class FormularyRegForm(forms.ModelForm):
     class Meta: 
         model = Formulary
