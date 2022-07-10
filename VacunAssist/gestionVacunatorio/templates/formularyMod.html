@@ -107,7 +107,7 @@
 <h1 class="h3 mb-3 fw-normal">Formulario de ingreso</h1>
 
 <div style="width: 100%; margin:auto">
-
+<br>
   {% if messages %}
 
       {% for message in messages %}
@@ -123,6 +123,8 @@
     <summary>Informacion para menores de edad</summary>
     <span style="background-color:rgba(162, 212, 106, 0.774)">Si usted es menor de edad y no posee ninguna vacuna de tipo Covid, NO se le creara un turno por politica del vacunatorio.</span>
   </details>
+  actual riesgo: {{formu.risk}}
+
   <br>
   
   {{form|crispy}}

@@ -790,6 +790,12 @@ class SetTurnRequestDate(View):
         turn.date = datetime.fromisoformat(request.POST['dateOfBirth'])
         turn.accepted = True
         turn.save()
+
+        u = User.objects.filter(id = turn.user_id).first()
+
+
+        send_turn_confirmation_email(u.email, u.name, u.zone, turn.date)
+        
         #print(turn.id)
         messages.success(request, "Se ha asignado el turno correctamente.")
         return redirect(self.success_url)
@@ -1277,7 +1283,7 @@ class FormularioDeIngreso(View):
 class FormularioDeIngresoModificacion(View):
     template_name = "formularyMod.html"
     form_class = FormularioDeIngresoForm
-    success_url = reverse_lazy('main:homeA')
+    success_url = reverse_lazy('main:Formulario_de_usuario')
 
     def sacarEdad(self,user):
         fecha1 = user.dateOfBirth
@@ -1293,7 +1299,9 @@ class FormularioDeIngresoModificacion(View):
         user = User.objects.filter(id = request.session['arg_user_id'])
         user = user.first()
         if user != None:
-            return render(request, self.template_name, {'form': self.form_class})
+            f = Formulary.objects.filter(user_id = user.id).first()
+            form = FormularioDeIngresoForm({'de_riesgo': f.risk, 'covid_1_date':f.covid_1_date,'covid_2_date':f.covid_2_date, 'amarilla_ok':f.amarilla_ok, 'gripe_date':f.gripe_date})
+            return render(request, self.template_name, {'form': form})
 
         return render(request, self.template_name, {'form': self.form_class}) # POR LAS DUDAS
 
@@ -1360,7 +1368,7 @@ class FormularioDeIngresoModificacion(View):
                         gripe_date = GD,
                         amarilla_ok = amarilla
                     )
-            messages.success(request,"Formulario creado con exito.")
+            messages.success(request,"Formulario modificado con exito.")
             return redirect(self.success_url)
             
         else:
