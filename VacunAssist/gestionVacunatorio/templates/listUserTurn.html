@@ -114,7 +114,11 @@
               <th scope="row">{{ turno.id }}</th>
               <td>{{ turno.user_id }}</td>
               <td>{{ turno.vaccine_id }}</td>
-              <td>{{ turno.date }}</td>
+              {% if  turno.date  == None %}
+                <td> Pendiente </td>
+              {% else %}
+                <td> {{turno.date}} </td>
+              {% endif %}
               <td>{{ turno.zone }}</td>
             </tr>
             {% endfor %}

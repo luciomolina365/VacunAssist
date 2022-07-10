@@ -44,7 +44,9 @@
 
     Hola {{request.session.user.name}}
     <br>
+    {% if request.session.user.admin == False %}
     Zona: {{request.session.user.zone}}
+    {% endif %}
     
     </div>
   </div>

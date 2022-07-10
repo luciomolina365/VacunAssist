@@ -293,7 +293,7 @@ class ListUserTurn(View):
             turnos=Turn.objects.order_by("date").filter(user_id=request.user.id)
             turns=[] 
             for t in turnos:
-                if (t.date >= date.today()):
+                if (t.date == None) or (t.date >= date.today()):
                     aux=t
                     aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                     aux.user_id=request.user.name
@@ -504,6 +504,7 @@ class ListCovid(View):
 
         for t in turns:
             try:
+                if (t.date != None):
                     if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="COVID"
@@ -527,6 +528,7 @@ class ListGripe(View):
 
         for t in turns:
             try:
+                if (t.date != None):
                     if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="GRIPE"
@@ -571,6 +573,7 @@ class ListAmarilla(View):
 
         for t in turns:
             try:
+                if (t.date != None):
                     if (t.date < date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="AMARILLA"
@@ -616,6 +619,7 @@ class ListTurnDay(View):
 
         for t in turns:
             try:
+                if (t.date!= None):
                         turn=t
                         turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
                         turn.user_id=User.objects.get(id = t.user_id)
