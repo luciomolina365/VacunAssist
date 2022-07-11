@@ -337,7 +337,7 @@ class ListUserHistory(View):
             turns=[] 
             for t in turnos:
                 if t.date != None:
-                    if (t.date < date.today() and t.status== True):
+                    if (t.date <= date.today() and t.status== True):
                         aux=t
                         aux.vaccine_id=Vaccine.objects.get(id = t.vaccine_id)
                         aux.user_id=request.user.name
@@ -545,7 +545,7 @@ class ListCovid(View):
         for t in turns:
             try:
                 if (t.date != None):
-                    if (t.date < date.today() and t.status==True):
+                    if (t.date <= date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="COVID"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -569,7 +569,7 @@ class ListGripe(View):
         for t in turns:
             try:
                 if (t.date != None):
-                    if (t.date < date.today() and t.status==True):
+                    if (t.date <= date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="GRIPE"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -614,7 +614,7 @@ class ListAmarilla(View):
         for t in turns:
             try:
                 if (t.date != None):
-                    if (t.date < date.today() and t.status==True):
+                    if (t.date <= date.today() and t.status==True):
                         turn=t
                         turn.vaccine_id="AMARILLA"
                         turn.user_id=User.objects.get(id = t.user_id)
@@ -681,11 +681,12 @@ class ListTurnDay(View):
         data=[]
         for t in turns:
             try:
-                        turn=t
-                        turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
-                        turn.user_id=User.objects.get(id = t.user_id)
-                        turn.zone=turn.user_id.zone
-                        data.append(turn)
+                if (t.date!= None):
+                    turn=t
+                    turn.vaccine_id=Vaccine.objects.get(id=t.vaccine_id)
+                    turn.user_id=User.objects.get(id = t.user_id)
+                    turn.zone=turn.user_id.zone
+                    data.append(turn)
             except Turn.DoesNotExist:
                 pass
 
